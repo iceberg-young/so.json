@@ -5,12 +5,12 @@
 
 namespace singularity {
     template<>
-    class json_node<json_type::null> :
+    class json_node<content_t::null> :
       public json_data
     {
     public:
         json_node() :
-          json_data(json_type::null) {
+          json_data(content_t::null) {
         }
 
     public:
@@ -31,7 +31,7 @@ namespace singularity {
         }
 
     public:
-        json_detail clone() override {
+        detail_t clone() override {
             return this->shared_from_this();
         }
     };

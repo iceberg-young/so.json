@@ -1,14 +1,12 @@
 #include "json.hpp"
 #include "json_data.hpp"
 
-using namespace std;
-
 namespace singularity {
     json::json(const std::string &text) {
         // TODO
     }
 
-    json::json(json_type type) :
+    json::json(content_t type) noexcept :
       data(json_data::factory(type)) {
     }
 
@@ -30,15 +28,15 @@ namespace singularity {
         return *this;
     }
 
-    std::string json::stringify() {
+    std::string json::stringify() const noexcept {
         return "TODO";
     }
 
-    json_type json::type() {
+    content_t json::type() const noexcept {
         return this->data->type;
     }
 
-    json &json::be(json_type type) {
+    json &json::be(content_t type) {
         if (this->data->type != type) {
             this->data = json_data::factory(type);
         }
@@ -46,32 +44,47 @@ namespace singularity {
     }
 
     json &json::be_boolean(bool value) {
-        this->be(json_type::boolean).data->be_boolean(value);
+        this->be(content_t::boolean).data->be_boolean(value);
         return *this;
     }
 
     json &json::be_decimal(double value) {
-        this->be(json_type::decimal).data->be_decimal(value);
+        this->be(content_t::decimal).data->be_decimal(value);
         return *this;
     }
 
     json &json::be_integer(int value) {
-        this->be(json_type::integer).data->be_integer(value);
+        this->be(content_t::integer).data->be_integer(value);
         return *this;
     }
 
     json &json::be_string(const std::string &value) {
-        this->be(json_type::string).data->be_string(value);
+        this->be(content_t::string).data->be_string(value);
         return *this;
     }
 
-    json &json::be_array(const json_array &value) {
-        this->be(json_type::array).data->be_array(value);
+    json &json::be_string(std::string &&value) {
+        this->be(content_t::string).data->be_string(std::move(value));
         return *this;
     }
 
-    json &json::be_object(const json_object &value) {
-        this->be(json_type::object).data->be_object(value);
+    json &json::be_array(const array_t &value) {
+        this->be(content_t::array).data->be_array(value);
+        return *this;
+    }
+
+    json &json::be_array(array_t &&value) {
+        this->be(content_t::array).data->be_array(std::move(value));
+        return *this;
+    }
+
+    json &json::be_object(const object_t &value) {
+        this->be(content_t::object).data->be_object(value);
+        return *this;
+    }
+
+    json &json::be_object(object_t &&value) {
+        this->be(content_t::object).data->be_object(std::move(value));
         return *this;
     }
 
@@ -91,19 +104,19 @@ namespace singularity {
         return this->data->to_string();
     }
 
-    json_array json::to_array() const {
+    array_t json::to_array() const {
         return this->data->to_array();
     }
 
-    json_object json::to_object() const {
+    object_t json::to_object() const {
         return this->data->to_object();
     }
 
-    json json::get(size_t index) {
+    json json::get(size_t index) const {
         return this->data->to_array().at(index);
     }
 
-    json json::get(const std::string &key) {
+    json json::get(const std::string &key) const {
         return this->data->to_object().at(key);
     }
 
@@ -141,5 +154,19 @@ namespace singularity {
     json &json::set(const std::string &key, json &&value) {
         this->data->to_object()[key] = std::move(value);
         return *this;
+    }
+
+    json::iterator::iterator(forward_t forward) :
+      current(0 - 1, nullptr, ""),
+      forward(forward) {
+        this->forward(this->current);
+    }
+
+    json::iterator json::begin() {
+        throw "TODO";
+    }
+
+    json::iterator json::end() {
+        throw "TODO";
     }
 }

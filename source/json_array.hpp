@@ -6,21 +6,25 @@
 
 namespace singularity {
     template<>
-    class json_node<json_type::array> :
+    class json_node<content_t::array> :
       public json_data
     {
     public:
         json_node() :
-          json_data(json_type::array) {
+          json_data(content_t::array) {
         }
 
     public:
-        void be_array(const json_array &value) override {
+        void be_array(const array_t &value) override {
             this->value = value;
         }
 
+        void be_array(array_t &&value) override {
+            this->value.swap(value);
+        }
+
     public:
-        json_array &to_array() override {
+        array_t &to_array() override {
             return this->value;
         }
 
@@ -34,12 +38,12 @@ namespace singularity {
         }
 
     public:
-        json_detail clone() override {
-            return json_detail{new json_node{*this}};
+        detail_t clone() override {
+            return detail_t{new json_node{*this}};
         }
 
     private:
-        json_array value;
+        array_t value;
     };
 }
 

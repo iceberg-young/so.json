@@ -5,14 +5,19 @@
 #include "json.hpp"
 
 namespace singularity {
+    using array_t = json::array_t;
+    using object_t = json::object_t;
+    using detail_t = json::detail_t;
+    using content_t = json::content_type;
+
     class json_data :
       public std::enable_shared_from_this<json_data>
     {
     public:
-        static json_detail factory(json_type type);
+        static detail_t factory(content_t type);
 
     public:
-        json_data(json_type type) :
+        json_data(content_t type) :
           type(type) {
         }
 
@@ -36,11 +41,23 @@ namespace singularity {
             throw std::bad_cast{};
         }
 
-        virtual void be_array(const json_array &value) {
+        virtual void be_string(std::string &&value) {
             throw std::bad_cast{};
         }
 
-        virtual void be_object(const json_object &value) {
+        virtual void be_array(const array_t &value) {
+            throw std::bad_cast{};
+        }
+
+        virtual void be_array(array_t &&value) {
+            throw std::bad_cast{};
+        }
+
+        virtual void be_object(const object_t &value) {
+            throw std::bad_cast{};
+        }
+
+        virtual void be_object(object_t &&value) {
             throw std::bad_cast{};
         }
 
@@ -61,22 +78,22 @@ namespace singularity {
             throw std::bad_cast{};
         }
 
-        virtual json_array &to_array() {
+        virtual array_t &to_array() {
             throw std::bad_cast{};
         }
 
-        virtual json_object &to_object() {
+        virtual object_t &to_object() {
             throw std::bad_cast{};
         }
 
     public:
-        virtual json_detail clone() = 0;
+        virtual detail_t clone() = 0;
 
     public:
-        const json_type type;
+        const content_t type;
     };
 
-    template<json_type>
+    template<content_t>
     class json_node :
       public json_data
     {

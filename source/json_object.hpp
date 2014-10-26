@@ -5,21 +5,25 @@
 
 namespace singularity {
     template<>
-    class json_node<json_type::object> :
+    class json_node<content_t::object> :
       public json_data
     {
     public:
         json_node() :
-          json_data(json_type::object) {
+          json_data(content_t::object) {
         }
 
     public:
-        void be_object(const json_object &value) override {
+        void be_object(const object_t &value) override {
             this->value = value;
         }
 
+        void be_object(object_t &&value) override {
+            this->value.swap(value);
+        }
+
     public:
-        json_object &to_object() override {
+        object_t &to_object() override {
             return this->value;
         }
 
@@ -29,12 +33,12 @@ namespace singularity {
         }
 
     public:
-        json_detail clone() override {
-            return json_detail{new json_node{*this}};
+        detail_t clone() override {
+            return detail_t{new json_node{*this}};
         }
 
     private:
-        json_object value;
+        object_t value;
     };
 }
 

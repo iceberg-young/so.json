@@ -8,30 +8,30 @@
 #include "json_object.hpp"
 
 namespace singularity {
-    json_detail json_node_null{new json_node<json_type::null>};
+    detail_t json_node_null{new json_node<content_t::null>};
 
-    json_detail json_data::factory(json_type type) {
+    detail_t json_data::factory(content_t type) {
         switch (type) {
-            case json_type::null:
+            case content_t::null:
                 return json_node_null;
 
-            case json_type::boolean:
-                return json_detail{new json_node<json_type::boolean>};
+            case content_t::boolean:
+                return detail_t{new json_node<content_t::boolean>};
 
-            case json_type::decimal:
-                return json_detail{new json_node<json_type::decimal>};
+            case content_t::decimal:
+                return detail_t{new json_node<content_t::decimal>};
 
-            case json_type::integer:
-                return json_detail{new json_node<json_type::integer>};
+            case content_t::integer:
+                return detail_t{new json_node<content_t::integer>};
 
-            case json_type::string:
-                return json_detail{new json_node<json_type::string>};
+            case content_t::string:
+                return detail_t{new json_node<content_t::string>};
 
-            case json_type::array:
-                return json_detail{new json_node<json_type::array>};
+            case content_t::array:
+                return detail_t{new json_node<content_t::array>};
 
-            case json_type::object:
-                return json_detail{new json_node<json_type::object>};
+            case content_t::object:
+                return detail_t{new json_node<content_t::object>};
         }
     }
 }

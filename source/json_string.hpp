@@ -5,17 +5,21 @@
 
 namespace singularity {
     template<>
-    class json_node<json_type::string> :
+    class json_node<content_t::string> :
       public json_data
     {
     public:
         json_node() :
-          json_data(json_type::string) {
+          json_data(content_t::string) {
         }
 
     public:
         void be_string(const std::string &value) override {
             this->value = value;
+        }
+
+        void be_string(std::string &&value) override {
+            this->value.swap(value);
         }
 
     public:
@@ -37,8 +41,8 @@ namespace singularity {
         }
 
     public:
-        json_detail clone() override {
-            return json_detail{new json_node{*this}};
+        detail_t clone() override {
+            return detail_t{new json_node{*this}};
         }
 
     private:

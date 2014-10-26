@@ -5,12 +5,12 @@
 
 namespace singularity {
     template<>
-    class json_node<json_type::decimal> :
+    class json_node<content_t::decimal> :
       public json_data
     {
     public:
         json_node() :
-          json_data(json_type::decimal) {
+          json_data(content_t::decimal) {
         }
 
     public:
@@ -37,8 +37,8 @@ namespace singularity {
         }
 
     public:
-        json_detail clone() override {
-            return json_detail{new json_node{*this}};
+        detail_t clone() override {
+            return detail_t{new json_node{*this}};
         }
 
     private:
