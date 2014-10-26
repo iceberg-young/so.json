@@ -24,11 +24,17 @@ namespace singularity {
         }
 
     public:
-        double to_decimal() const override;
+        double to_decimal() const override {
+            return this->value ? 1.0 : 0.0;
+        }
 
-        int to_integer() const override;
+        int to_integer() const override {
+            return this->value ? 1 : 0;
+        }
 
-        std::string to_string() const override;
+        std::string to_string() const override {
+            return this->value ? "true" : "false";
+        }
 
     public:
         json_detail clone() override {

@@ -24,7 +24,9 @@ namespace singularity {
         }
 
     public:
-        std::string to_string() const override;
+        std::string to_string() const override {
+            return "[object Object]";
+        }
 
     public:
         json_detail clone() override {
