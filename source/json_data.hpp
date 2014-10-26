@@ -61,11 +61,11 @@ namespace singularity {
             throw std::bad_cast{};
         }
 
-        virtual json_array to_array() const {
+        virtual json_array &to_array() {
             throw std::bad_cast{};
         }
 
-        virtual json_object to_object() const {
+        virtual json_object &to_object() {
             throw std::bad_cast{};
         }
 
@@ -76,19 +76,11 @@ namespace singularity {
         const json_type type;
     };
 
-    template<json_type T>
+    template<json_type>
     class json_node :
       public json_data
     {
-    public:
-        json_node() :
-          json_data(T) {
-        }
-
-    public:
-        json_detail clone() override {
-            return json_detail{new json_node{*this}};
-        }
+        // Not used
     };
 }
 

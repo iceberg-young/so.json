@@ -5,7 +5,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fvisibility=hidden -fvisibil
 set(SOURCE_FILES
     json.cpp
     json_data.cpp
-    json_undefined.cpp
     json_null.cpp
     json_boolean.cpp
     json_decimal.cpp

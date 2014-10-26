@@ -7,9 +7,9 @@
 #include <vector>
 
 namespace singularity {
+    // Possible content types.
     enum class json_type
     {
-        undefined,
         null,
         boolean,
         decimal,
@@ -19,23 +19,30 @@ namespace singularity {
         object,
     };
 
+    // Implementation type of json_type::array.
     using json_array = std::vector<class json>;
+
+    // Implementation type of json_type::object.
     using json_object = std::map<std::string, class json>;
+
+    // Implementation type of internal details.
     using json_detail = std::shared_ptr<class json_data>;
 
+    // Extended implementation of ECMA-404.
     class json
     {
     public:
+        // Initialize from a JSON string.
         json(const std::string &text);
 
-        json(json_type type = json_type::undefined);
+        // Initialize an empty node.
+        json(json_type type = json_type::null);
 
+        // Clone from the other node.
         json(const json &other);
 
+        // Steal from the other node.
         json(json &&other);
-
-        ~json() {
-        }
 
     public:
         json &operator=(const json &other);
@@ -43,6 +50,13 @@ namespace singularity {
         json &operator=(json &&other);
 
     public:
+        // Get corresponding JSON string representation.
+        std::string stringify();
+
+        // Get node type.
+        json_type type();
+
+    public: // Change node type (by value). Return *this.
         json &be(json_type type);
 
         json &be_boolean(bool value);
@@ -57,7 +71,7 @@ namespace singularity {
 
         json &be_object(const json_object &value);
 
-    public:
+    public: // Shortcuts for changing node type. Return *this.
         json &operator=(std::nullptr_t) {
             return this->be(json_type::null);
         }
@@ -78,10 +92,6 @@ namespace singularity {
             return this->be_string(value);
         }
 
-        json &operator=(const char *value) {
-            return this->be_string(value);
-        }
-
         json &operator=(const json_array &value) {
             return this->be_array(value);
         }
@@ -90,7 +100,7 @@ namespace singularity {
             return this->be_object(value);
         }
 
-    public:
+    public: // Get content value, may throw std::bad_cast if type mismatch.
         bool to_boolean() const;
 
         double to_decimal() const;
@@ -103,7 +113,7 @@ namespace singularity {
 
         json_object to_object() const;
 
-    public:
+    public: // Shortcuts for getting content value.
         operator bool() const {
             return this->to_boolean();
         }
@@ -128,18 +138,24 @@ namespace singularity {
             return this->to_object();
         }
 
-    public:
-        json_type type();
+    public: // *Get* an element from array|object.
+        json get(size_t index);
 
-        std::string stringify();
+        json get(const std::string &key);
+
+    public: // *Set* an element to array|object. Return *this.
+        json &set(size_t index, const json &value);
+
+        json &set(size_t index, json &&value);
+
+        json &set(const std::string &key, const json &value);
+
+        json &set(const std::string &key, json &&value);
 
     private:
+        // The implementation details. Wrapped to minimise interface.
         json_detail data;
     };
-
-    json json_decode(const std::string &text);
-
-    std::string json_encode(const json &node);
 }
 
 #endif//INCLUDE_SINGULARITY_JSON_ONCE_FLAG

@@ -5,6 +5,7 @@ using namespace std;
 
 namespace singularity {
     json::json(const std::string &text) {
+        // TODO
     }
 
     json::json(json_type type) :
@@ -29,6 +30,14 @@ namespace singularity {
         return *this;
     }
 
+    std::string json::stringify() {
+        return "TODO";
+    }
+
+    json_type json::type() {
+        return this->data->type;
+    }
+
     json &json::be(json_type type) {
         if (this->data->type != type) {
             this->data = json_data::factory(type);
@@ -37,38 +46,32 @@ namespace singularity {
     }
 
     json &json::be_boolean(bool value) {
-        this->be(json_type::boolean);
-        this->data->be_boolean(value);
+        this->be(json_type::boolean).data->be_boolean(value);
         return *this;
     }
 
     json &json::be_decimal(double value) {
-        this->be(json_type::decimal);
-        this->data->be_decimal(value);
+        this->be(json_type::decimal).data->be_decimal(value);
         return *this;
     }
 
     json &json::be_integer(int value) {
-        this->be(json_type::integer);
-        this->data->be_integer(value);
+        this->be(json_type::integer).data->be_integer(value);
         return *this;
     }
 
     json &json::be_string(const std::string &value) {
-        this->be(json_type::string);
-        this->data->be_string(value);
+        this->be(json_type::string).data->be_string(value);
         return *this;
     }
 
     json &json::be_array(const json_array &value) {
-        this->be(json_type::array);
-        this->data->be_array(value);
+        this->be(json_type::array).data->be_array(value);
         return *this;
     }
 
     json &json::be_object(const json_object &value) {
-        this->be(json_type::object);
-        this->data->be_object(value);
+        this->be(json_type::object).data->be_object(value);
         return *this;
     }
 
@@ -96,11 +99,47 @@ namespace singularity {
         return this->data->to_object();
     }
 
-    json_type json::type() {
-        return this->data->type;
+    json json::get(size_t index) {
+        return this->data->to_array().at(index);
     }
 
-    std::string json::stringify() {
-        return "";
+    json json::get(const std::string &key) {
+        return this->data->to_object().at(key);
+    }
+
+    json &json::set(size_t index, const json &value) {
+        auto &array = this->data->to_array();
+        if (array.size() > index) {
+            array[index] = value;
+        }
+        else {
+            array.reserve(index + 1);
+            array.resize(index);
+            array.emplace_back(value);
+        }
+        return *this;
+    }
+
+    json &json::set(size_t index, json &&value) {
+        auto &array = this->data->to_array();
+        if (array.size() > index) {
+            array[index] = std::move(value);
+        }
+        else {
+            array.reserve(index + 1);
+            array.resize(index);
+            array.emplace_back(std::move(value));
+        }
+        return *this;
+    }
+
+    json &json::set(const std::string &key, const json &value) {
+        this->data->to_object()[key] = value;
+        return *this;
+    }
+
+    json &json::set(const std::string &key, json &&value) {
+        this->data->to_object()[key] = std::move(value);
+        return *this;
     }
 }

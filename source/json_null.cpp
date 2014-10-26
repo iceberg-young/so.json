@@ -14,6 +14,6 @@ namespace singularity {
     }
 
     std::string json_node<json_type::null>::to_string() const {
-        return std::string{"null"};
+        return "null";
     }
 }

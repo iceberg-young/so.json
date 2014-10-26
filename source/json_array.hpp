@@ -19,7 +19,7 @@ namespace singularity {
         }
 
     public:
-        json_array to_array() const override {
+        json_array &to_array() override {
             return this->value;
         }
 
@@ -28,7 +28,7 @@ namespace singularity {
 
     public:
         json_detail clone() override {
-            return this->shared_from_this();
+            return json_detail{new json_node{*this}};
         }
 
     private:

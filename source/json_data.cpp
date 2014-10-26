@@ -1,5 +1,4 @@
 #include "json_data.hpp"
-#include "json_undefined.hpp"
 #include "json_null.hpp"
 #include "json_boolean.hpp"
 #include "json_decimal.hpp"
@@ -9,15 +8,10 @@
 #include "json_object.hpp"
 
 namespace singularity {
-    json_detail json_node_undefined{new json_node<json_type::undefined>};
-
     json_detail json_node_null{new json_node<json_type::null>};
 
     json_detail json_data::factory(json_type type) {
         switch (type) {
-            case json_type::undefined:
-                return json_node_undefined;
-
             case json_type::null:
                 return json_node_null;
 
