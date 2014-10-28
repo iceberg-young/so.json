@@ -9,7 +9,7 @@
 #include <functional>
 
 namespace singularity {
-    // Extended implementation of ECMA-404.
+    // Representation of RFC-7159 specified object.
     class json
     {
     public:
@@ -23,6 +23,7 @@ namespace singularity {
             array,
             object,
         };
+
     public:
         // Implementation type of content_type::array.
         using array_t = std::vector<json>;
@@ -34,7 +35,7 @@ namespace singularity {
         using detail_t = std::shared_ptr<class json_data>;
 
     public:
-        // Initialize from a JSON string.
+        // Initialize from a JSON text.
         json(const std::string &text);
 
         // Initialize an empty node.
@@ -52,7 +53,7 @@ namespace singularity {
         json &operator=(json &&other);
 
     public:
-        // Get corresponding JSON string representation.
+        // Get corresponding JSON text.
         std::string stringify() const noexcept;
 
         // Get node type.
@@ -133,6 +134,11 @@ namespace singularity {
 
         object_t to_object() const;
 
+    public:
+        array_t &as_array();
+
+        object_t &as_object();
+
     public: // Shortcuts for getting content value.
         operator bool() const {
             return this->to_boolean();
@@ -158,58 +164,14 @@ namespace singularity {
             return this->to_object();
         }
 
-    public: // *Get* an element from array|object.
-        json get(size_t index) const;
-
-        json get(const std::string &key) const;
-
-    public: // *Set* an element to array|object. Return *this.
-        json &set(size_t index, const json &value);
-
-        json &set(size_t index, json &&value);
-
-        json &set(const std::string &key, const json &value);
-
-        json &set(const std::string &key, json &&value);
-
     public:
-        // Iterating over json of array|object.
-        class iterator
-        {
-        public:
-            using element_t = std::tuple<size_t, json *, std::string>;
-            using forward_t = std::function<void(element_t &)>;
+        operator array_t &() {
+            return this->as_array();
+        }
 
-        public:
-            iterator(forward_t forward);
-
-        public:
-            iterator &operator++() {
-                this->forward(this->current);
-                return *this;
-            }
-
-        public:
-            element_t &operator*() {
-                return this->current;
-            }
-
-        public:
-            bool operator!=(const iterator &other) const {
-                return this->current != other.current;
-            }
-
-        private:
-            forward_t forward;
-
-        private:
-            element_t current;
-        };
-
-    public:
-        iterator begin();
-
-        iterator end();
+        operator object_t &() {
+            return this->as_object();
+        }
 
     private:
         // The implementation details. Wrapped to minimise interface.

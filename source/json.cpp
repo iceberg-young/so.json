@@ -112,61 +112,11 @@ namespace singularity {
         return this->data->to_object();
     }
 
-    json json::get(size_t index) const {
-        return this->data->to_array().at(index);
+    array_t &json::as_array() {
+        return this->data->to_array();
     }
 
-    json json::get(const std::string &key) const {
-        return this->data->to_object().at(key);
-    }
-
-    json &json::set(size_t index, const json &value) {
-        auto &array = this->data->to_array();
-        if (array.size() > index) {
-            array[index] = value;
-        }
-        else {
-            array.reserve(index + 1);
-            array.resize(index);
-            array.emplace_back(value);
-        }
-        return *this;
-    }
-
-    json &json::set(size_t index, json &&value) {
-        auto &array = this->data->to_array();
-        if (array.size() > index) {
-            array[index] = std::move(value);
-        }
-        else {
-            array.reserve(index + 1);
-            array.resize(index);
-            array.emplace_back(std::move(value));
-        }
-        return *this;
-    }
-
-    json &json::set(const std::string &key, const json &value) {
-        this->data->to_object()[key] = value;
-        return *this;
-    }
-
-    json &json::set(const std::string &key, json &&value) {
-        this->data->to_object()[key] = std::move(value);
-        return *this;
-    }
-
-    json::iterator::iterator(forward_t forward) :
-      current(0 - 1, nullptr, ""),
-      forward(forward) {
-        this->forward(this->current);
-    }
-
-    json::iterator json::begin() {
-        throw "TODO";
-    }
-
-    json::iterator json::end() {
-        throw "TODO";
+    object_t &json::as_object() {
+        return this->data->to_object();
     }
 }
