@@ -5,18 +5,18 @@ using namespace std;
 using namespace singularity;
 
 int main() {
-    json a{json::content_type::array}, b{json::content_type::boolean}, c{b}, e;
-    json::array_t &aa = a;
-    b = true;
-    aa.push_back(b);
+    json a{json::content_type::array}, b = true, c{b}, d;
+    json::array_t &x = a;
+    x.push_back(b);
     c = false;
-    aa.push_back(c);
-    e = std::string{"abc\"def\\ghi\tjkl\n\tm,no"};
-    aa.push_back(e);
-    json::object_t oa;
-    oa["abc\"def\\ghi\tjkl\n\tm,no"] = a;
-    json d;
-    d = oa;
-    cout << d.stringify();
+    x.push_back(c);
+    d = "abc\"def\\ghi\tjkl\n\tmno";
+    x.push_back(d);
+    json::object_t y;
+    y["abno"] = a;
+    y["c\"\tm"] = b;
+    y["del\n"] = c;
+    y["f\\jk"] = d;
+    cout << json{y}.stringify();
     return 0;
 }

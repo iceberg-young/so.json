@@ -35,9 +35,6 @@ namespace singularity {
         using detail_t = std::shared_ptr<class json_data>;
 
     public:
-        // Initialize from a JSON text.
-        json(const std::string &text);
-
         // Initialize an empty node.
         json(content_type type = content_type::null) noexcept;
 
@@ -47,12 +44,38 @@ namespace singularity {
         // Steal from the other node.
         json(json &&other);
 
+    public: // Initialize by value.
+        json(bool value);
+
+        json(int value);
+
+        json(double value);
+
+        json(const std::string &value);
+
+        json(std::string &&value);
+
+        json(const char *value) :
+          json(std::string{value}) {
+        }
+
+        json(const array_t &value);
+
+        json(array_t &&value);
+
+        json(const object_t &value);
+
+        json(object_t &&value);
+
     public:
         json &operator=(const json &other);
 
         json &operator=(json &&other);
 
     public:
+        // Initialize from a JSON text.
+        json parse(const std::string &text);
+
         // Get corresponding JSON text.
         std::string stringify() const noexcept;
 
@@ -103,6 +126,10 @@ namespace singularity {
 
         json &operator=(std::string &&value) {
             return this->be_string(std::move(value));
+        }
+
+        json &operator=(const char *value) {
+            return this->be_string(std::string(value));
         }
 
         json &operator=(const array_t &value) {

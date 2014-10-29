@@ -2,10 +2,6 @@
 #include "json_data.hpp"
 
 namespace singularity {
-    json::json(const std::string &text) {
-        // TODO
-    }
-
     json::json(content_t type) noexcept :
       data(json_data::factory(type)) {
     }
@@ -18,6 +14,51 @@ namespace singularity {
         this->data.swap(other.data);
     }
 
+    json::json(bool value) :
+      data(json_data::factory(content_t::boolean)) {
+        this->data->be_boolean(value);
+    }
+
+    json::json(int value) :
+      data(json_data::factory(content_t::integer)) {
+        this->data->be_integer(value);
+    }
+
+    json::json(double value) :
+      data(json_data::factory(content_t::decimal)) {
+        this->data->be_decimal(value);
+    }
+
+    json::json(const std::string &value) :
+      data(json_data::factory(content_t::string)) {
+        this->data->be_string(value);
+    }
+
+    json::json(std::string &&value) :
+      data(json_data::factory(content_t::string)) {
+        this->data->be_string(std::move(value));
+    }
+
+    json::json(const array_t &value) :
+      data(json_data::factory(content_t::array)) {
+        this->data->be_array(value);
+    }
+
+    json::json(array_t &&value) :
+      data(json_data::factory(content_t::array)) {
+        this->data->be_array(std::move(value));
+    }
+
+    json::json(const object_t &value) :
+      data(json_data::factory(content_t::object)) {
+        this->data->be_object(value);
+    }
+
+    json::json(object_t &&value) :
+      data(json_data::factory(content_t::object)) {
+        this->data->be_object(std::move(value));
+    }
+
     json &json::operator=(const json &other) {
         this->data = other.data->clone();
         return *this;
@@ -26,6 +67,11 @@ namespace singularity {
     json &json::operator=(json &&other) {
         this->data.swap(other.data);
         return *this;
+    }
+
+    json json::parse(const std::string &text) {
+        // TODO
+        return json{};
     }
 
     std::string json::stringify() const noexcept {
