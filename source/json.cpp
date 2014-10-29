@@ -29,7 +29,7 @@ namespace singularity {
     }
 
     std::string json::stringify() const noexcept {
-        return "TODO";
+        return this->data->stringify();
     }
 
     content_t json::type() const noexcept {

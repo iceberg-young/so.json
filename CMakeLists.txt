@@ -5,6 +5,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(SOURCE_FILES main.cpp)
 
 add_subdirectory(source)
-add_executable(json main.cpp)
+add_executable(json ${SOURCE_FILES})
 add_dependencies(json singularity.json)
 target_link_libraries(json singularity.json)

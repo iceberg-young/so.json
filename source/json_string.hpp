@@ -41,6 +41,11 @@ namespace singularity {
         }
 
     public:
+        std::string stringify() const override {
+            return '"' + json_data::escape(this->to_string()) + '"';
+        }
+
+    public:
         detail_t clone() override {
             return detail_t{new json_node{*this}};
         }

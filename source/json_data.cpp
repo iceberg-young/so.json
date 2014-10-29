@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "json_data.hpp"
 #include "json_null.hpp"
 #include "json_boolean.hpp"
@@ -33,5 +34,22 @@ namespace singularity {
             case content_t::object:
                 return detail_t{new json_node<content_t::object>};
         }
+    }
+
+    std::string json_data::escape(const std::string &content) {
+        std::stringstream ss;
+        ss << std::hex;
+        for (auto c : content) {
+            if (c < 0x20) {
+                ss << "\\u" << std::setfill('0') << std::setw(4) << int(c);
+            }
+            else {
+                if (c == '"' or c == '\\') {
+                    ss << '\\';
+                }
+                ss << c;
+            }
+        }
+        return ss.str();
     }
 }

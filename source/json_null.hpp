@@ -31,6 +31,11 @@ namespace singularity {
         }
 
     public:
+        std::string stringify() const override {
+            return "null";
+        }
+
+    public:
         detail_t clone() override {
             return this->shared_from_this();
         }

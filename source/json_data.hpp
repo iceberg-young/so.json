@@ -17,6 +17,9 @@ namespace singularity {
         static detail_t factory(content_t type);
 
     public:
+        static std::string escape(const std::string &content);
+
+    public:
         json_data(content_t type) :
           type(type) {
         }
@@ -84,6 +87,11 @@ namespace singularity {
 
         virtual object_t &to_object() {
             throw std::bad_cast{};
+        }
+
+    public:
+        virtual std::string stringify() const {
+            return this->to_string();
         }
 
     public:
