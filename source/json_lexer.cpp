@@ -6,23 +6,26 @@ namespace singularity {
 
     token json_lexer::parse(cursor &first, cursor &last) {
         token t;
-        while (token::space != (t = json_lexer::parse_value(first, last))) {}
+        while (token::space == (t = json_lexer::parse_value(last))) {
+            first = ++last;
+        }
+        if (t != token::number) ++last;
         return t;
     }
 
-    token json_lexer::parse_value(cursor &first, cursor &last) {
-        switch (*first) {
+    token json_lexer::parse_value(cursor &cursor) {
+        switch (*cursor) {
             case 'n': // null
-                return json_lexer::parse_literal(last = first, "ull");
+                return json_lexer::parse_literal(cursor, "ull");
 
             case 'f': // false
-                return json_lexer::parse_literal(last = first, "alse");
+                return json_lexer::parse_literal(cursor, "alse");
 
             case 't': // true
-                return json_lexer::parse_literal(last = first, "rue");
+                return json_lexer::parse_literal(cursor, "rue");
 
             case '"': // string
-                return json_lexer::parse_string(last = first);
+                return json_lexer::parse_string(cursor);
 
             case '[':
             case ']':
@@ -30,7 +33,7 @@ namespace singularity {
             case '}':
             case ':':
             case ',':
-                return static_cast<token>(*first);
+                return static_cast<token>(*cursor);
 
             case '-':
             case '0':
@@ -43,17 +46,16 @@ namespace singularity {
             case '7':
             case '8':
             case '9':
-                return json_lexer::parse_number(last = first);
+                return json_lexer::parse_number(cursor);
 
             case 0x09:
             case 0x0A:
             case 0x0D:
             case 0x20:
-                ++first;
                 return token::space;
 
             default:
-                throw std::invalid_argument(std::string{"Unexpected token: "} + *first);
+                throw std::invalid_argument(std::string{"Unexpected token: "} + *cursor);
         }
     }
 

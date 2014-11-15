@@ -12,13 +12,19 @@ namespace singularity {
         json static build(const cursor &text);
 
     protected:
+        json static cascade(json_lexer::token token, cursor &first, cursor &last);
+
         json static create(json_lexer::token token, const cursor &first, const cursor &last);
 
         std::string static unescape(const cursor &first, const cursor &last);
 
-        void static fill_array(json &array, const cursor &first, const cursor &last);
+        void static fill_array(json &array, cursor &first, cursor &last);
 
-        void static fill_object(json &object, const cursor &first, const cursor &last);
+        void static fill_object(json &object, cursor &first, cursor &last);
+
+        bool static pass_comma(json_lexer::token token, bool &separated);
+
+        void static assert(json_lexer::token expected, json_lexer::token real);
     };
 }
 

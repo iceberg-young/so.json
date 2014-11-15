@@ -5,18 +5,15 @@ using namespace std;
 using namespace singularity;
 
 int main() {
-    json a{json::content_type::array}, b = true, c{b}, d;
-    json::array_t &x = a;
-    x.push_back(b);
-    c = false;
-    x.push_back(c);
-    d = "abc\"def\\ghi\tjkl\n\tmno";
-    x.push_back(d);
-    json::object_t y;
-    y["abno"] = a;
-    y["c\"\tm"] = b;
-    y["del\n"] = c;
-    y["f\\jk"] = d;
-    cout << json{y}.stringify();
+//    cout << json::parse("").stringify() << endl;
+    cout << json::parse("null").stringify() << endl;
+    cout << json::parse("false").stringify() << endl;
+    cout << json::parse("true").stringify() << endl;
+    cout << json::parse("1.234e2").stringify() << endl;
+    cout << json::parse("\"hello\\\"world\"").stringify() << endl;
+
+    cout << json::parse("[1,\"2\", [ 3, \"x4x\",[5]]]").stringify() << endl;
+    cout << json::parse("{\"x\":\"a\",\"y\" : [\"a\"] , \"z\": [ \"x\" ,{ \"y\" : [1, \"2\" ,3.4e2]}]}").stringify() << endl;
+
     return 0;
 }

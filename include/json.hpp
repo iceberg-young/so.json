@@ -73,7 +73,7 @@ namespace singularity {
 
     public:
         // Initialize from a JSON text.
-        json parse(const std::string &text);
+        json static parse(const std::string &text);
 
         // Get corresponding JSON text.
         std::string stringify() const noexcept;

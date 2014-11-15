@@ -28,11 +28,11 @@ namespace singularity {
 
     public:
         /// @param in[out] first
-        /// @param out(opt) last
+        /// @param out last
         token static parse(cursor &first, cursor &last);
 
     protected:
-        token static parse_value(cursor &first, cursor &last);
+        token static parse_value(cursor &cursor);
 
         token static parse_literal(cursor &cursor, const std::string &expected);
 

@@ -21,7 +21,8 @@ namespace singularity {
             if (*this == this->end) {
                 throw std::range_error{"Already reached the end."};
             }
-            return ++*this;
+            sci_t::operator++();
+            return *this;
         }
 
         cursor &operator=(const cursor &other) {
