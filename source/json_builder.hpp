@@ -2,7 +2,6 @@
 #define INCLUDE_SINGULARITY_JSON_BUILDER_ONCE_FLAG
 
 #include "json.hpp"
-#include "cursor.hpp"
 #include "json_lexer.hpp"
 
 namespace singularity {

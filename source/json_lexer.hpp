@@ -1,8 +1,6 @@
 #ifndef INCLUDE_SINGULARITY_JSON_LEXER_ONCE_FLAG
 #define INCLUDE_SINGULARITY_JSON_LEXER_ONCE_FLAG
 
-#include <functional>
-#include <string>
 #include "cursor.hpp"
 
 namespace singularity {

@@ -2,11 +2,9 @@
 #define INCLUDE_SINGULARITY_JSON_ONCE_FLAG
 
 #include <map>
-#include <tuple>
 #include <memory>
 #include <string>
 #include <vector>
-#include <functional>
 
 namespace singularity {
     // Representation of RFC-7159 specified object.
