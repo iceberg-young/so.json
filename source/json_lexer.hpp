@@ -6,12 +6,13 @@
 #include "cursor.hpp"
 
 namespace singularity {
-    class lexer
+    class json_lexer
     {
     public:
         enum class token :
           char
         {
+            space = 0,
             null = 'n',
             boolean_false = 'f',
             boolean_true = 't',
@@ -23,34 +24,21 @@ namespace singularity {
             object_end = '}',
             name_separator = ':',
             value_separator = ',',
-            done = '.',
         };
 
     public:
-        using callback_t = std::function<void(token, sci_t, sci_t)>;
-
-    public:
-        lexer(callback_t callback) :
-          callback(callback),
-          parser(&lexer::parse_value) {
-        }
-
-    public:
-        void parse(const std::string &text);
+        /// @param in[out] first
+        /// @param out(opt) last
+        token static parse(cursor &first, cursor &last);
 
     protected:
-        void parse_value(cursor &cursor);
+        token static parse_value(cursor &first, cursor &last);
 
-        void parse_literal(cursor &cursor, const std::string &expected);
+        token static parse_literal(cursor &cursor, const std::string &expected);
 
-        void parse_number(cursor &cursor);
+        token static parse_number(cursor &cursor);
 
-        void parse_string(cursor &cursor);
-
-    private:
-        callback_t callback;
-
-        void (lexer::*parser)(cursor &);
+        token static parse_string(cursor &cursor);
     };
 }
 

@@ -1,34 +1,28 @@
 #include <stdexcept>
-#include "lexer.hpp"
+#include "json_lexer.hpp"
 
 namespace singularity {
+    using token = json_lexer::token;
 
-    void lexer::parse(const std::string &text) {
-        cursor begin{text.begin(), text.end()};
-        do {
-            (this->*parser)(begin);
-        }
-        while (!begin.is_end());
-        this->callback(token::done, begin, begin);
+    token json_lexer::parse(cursor &first, cursor &last) {
+        token t;
+        while (token::space != (t = json_lexer::parse_value(first, last))) {}
+        return t;
     }
 
-    void lexer::parse_value(cursor &begin) {
-        switch (*begin) {
+    token json_lexer::parse_value(cursor &first, cursor &last) {
+        switch (*first) {
             case 'n': // null
-                this->parse_literal(begin, "ull");
-                break;
+                return json_lexer::parse_literal(last = first, "ull");
 
             case 'f': // false
-                this->parse_literal(begin, "alse");
-                break;
+                return json_lexer::parse_literal(last = first, "alse");
 
             case 't': // true
-                this->parse_literal(begin, "rue");
-                break;
+                return json_lexer::parse_literal(last = first, "rue");
 
             case '"': // string
-                this->parse_string(begin);
-                break;
+                return json_lexer::parse_string(last = first);
 
             case '[':
             case ']':
@@ -36,8 +30,7 @@ namespace singularity {
             case '}':
             case ':':
             case ',':
-                this->callback(static_cast<token>(*begin), begin, begin);
-                break;
+                return static_cast<token>(*first);
 
             case '-':
             case '0':
@@ -50,39 +43,36 @@ namespace singularity {
             case '7':
             case '8':
             case '9':
-                this->parse_number(begin);
-                break;
+                return json_lexer::parse_number(last = first);
 
             case 0x09:
             case 0x0A:
             case 0x0D:
             case 0x20:
-                break; // skip
+                ++first;
+                return token::space;
 
             default:
-                throw std::invalid_argument(std::string{"Unexpected token: "} + *begin);
+                throw std::invalid_argument(std::string{"Unexpected token: "} + *first);
         }
     }
 
-    void lexer::parse_literal(cursor &cursor, const std::string &expected) {
-        auto begin = cursor;
+    token json_lexer::parse_literal(cursor &cursor, const std::string &expected) {
+        token t = static_cast<token>(*cursor);
         for (auto c : expected) {
             if (c != *++cursor) {
                 throw std::invalid_argument{std::string{"Expect token: "} + c + ", but got: " + *cursor};
             }
         }
-        this->callback(static_cast<token>(*begin), begin, cursor);
+        return t;
     }
 
-    void lexer::parse_number(cursor &cursor) {
-        auto begin = cursor;
+    token json_lexer::parse_number(cursor &cursor) {
         while (true) {
             switch (*++cursor) {
-                case 'e':
-                case 'E':
-                case '.':
                 case '+':
                 case '-':
+                case '.':
                 case '0':
                 case '1':
                 case '2':
@@ -93,15 +83,16 @@ namespace singularity {
                 case '7':
                 case '8':
                 case '9':
+                case 'E':
+                case 'e':
                     continue;
             }
             break;
         }
-        this->callback(token::number, begin, cursor);
+        return token::number;
     }
 
-    void lexer::parse_string(cursor &cursor) {
-        auto begin = cursor;
+    token json_lexer::parse_string(cursor &cursor) {
         bool more = true;
         while (more) {
             switch (*++cursor) {
@@ -114,6 +105,6 @@ namespace singularity {
                     break;
             }
         }
-        this->callback(token::string, begin, cursor);
+        return token::string;
     }
 }

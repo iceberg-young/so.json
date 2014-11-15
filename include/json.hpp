@@ -171,7 +171,7 @@ namespace singularity {
         }
 
         operator int() const {
-            return this->to_number();
+            return static_cast<int>(this->to_number());
         }
 
         operator std::string() const {

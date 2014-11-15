@@ -1,5 +1,6 @@
 #include "json.hpp"
 #include "json_data.hpp"
+#include "json_builder.hpp"
 
 namespace singularity {
     json::json(content_t type) noexcept :
@@ -70,8 +71,7 @@ namespace singularity {
     }
 
     json json::parse(const std::string &text) {
-        // TODO
-        return json{};
+        return json_builder::build(cursor{text.begin(), text.end()});
     }
 
     std::string json::stringify() const noexcept {
