@@ -20,13 +20,13 @@ namespace singularity {
     }
 
     json::json(int value) :
-      data(json_data::factory(content_t::integer)) {
-        this->data->be_integer(value);
+      data(json_data::factory(content_t::number)) {
+        this->data->be_number(value);
     }
 
     json::json(double value) :
-      data(json_data::factory(content_t::decimal)) {
-        this->data->be_decimal(value);
+      data(json_data::factory(content_t::number)) {
+        this->data->be_number(value);
     }
 
     json::json(const std::string &value) :
@@ -94,13 +94,8 @@ namespace singularity {
         return *this;
     }
 
-    json &json::be_decimal(double value) {
-        this->be(content_t::decimal).data->be_decimal(value);
-        return *this;
-    }
-
-    json &json::be_integer(int value) {
-        this->be(content_t::integer).data->be_integer(value);
+    json &json::be_number(double value) {
+        this->be(content_t::number).data->be_number(value);
         return *this;
     }
 
@@ -138,12 +133,8 @@ namespace singularity {
         return this->data->to_boolean();
     }
 
-    double json::to_decimal() const {
-        return this->data->to_decimal();
-    }
-
-    int json::to_integer() const {
-        return this->data->to_integer();
+    double json::to_number() const {
+        return this->data->to_number();
     }
 
     std::string json::to_string() const {

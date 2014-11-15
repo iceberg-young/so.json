@@ -17,8 +17,7 @@ namespace singularity {
         {
             null,
             boolean,
-            decimal,
-            integer,
+            number,
             string,
             array,
             object,
@@ -87,9 +86,7 @@ namespace singularity {
 
         json &be_boolean(bool value);
 
-        json &be_decimal(double value);
-
-        json &be_integer(int value);
+        json &be_number(double value);
 
         json &be_string(const std::string &value);
 
@@ -113,11 +110,11 @@ namespace singularity {
         }
 
         json &operator=(double value) {
-            return this->be_decimal(value);
+            return this->be_number(value);
         }
 
         json &operator=(int value) {
-            return this->be_integer(value);
+            return this->be_number(value);
         }
 
         json &operator=(const std::string &value) {
@@ -151,9 +148,7 @@ namespace singularity {
     public: // Get content value, may throw std::bad_cast if type mismatch.
         bool to_boolean() const;
 
-        double to_decimal() const;
-
-        int to_integer() const;
+        double to_number() const;
 
         std::string to_string() const;
 
@@ -172,11 +167,11 @@ namespace singularity {
         }
 
         operator double() const {
-            return this->to_decimal();
+            return this->to_number();
         }
 
         operator int() const {
-            return this->to_integer();
+            return this->to_number();
         }
 
         operator std::string() const {

@@ -32,11 +32,7 @@ namespace singularity {
             throw std::bad_cast{};
         }
 
-        virtual void be_decimal(double value) {
-            throw std::bad_cast{};
-        }
-
-        virtual void be_integer(int value) {
+        virtual void be_number(double value) {
             throw std::bad_cast{};
         }
 
@@ -69,11 +65,7 @@ namespace singularity {
             throw std::bad_cast{};
         }
 
-        virtual double to_decimal() const {
-            throw std::bad_cast{};
-        }
-
-        virtual int to_integer() const {
+        virtual double to_number() const {
             throw std::bad_cast{};
         }
 

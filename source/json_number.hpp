@@ -1,35 +1,31 @@
-#ifndef INCLUDE_SINGULARITY_JSON_INTEGER_ONCE_FLAG
-#define INCLUDE_SINGULARITY_JSON_INTEGER_ONCE_FLAG
+#ifndef INCLUDE_SINGULARITY_JSON_NUMBER_ONCE_FLAG
+#define INCLUDE_SINGULARITY_JSON_NUMBER_ONCE_FLAG
 
 #include "json_data.hpp"
 
 namespace singularity {
     template<>
-    class json_node<content_t::integer> :
+    class json_node<content_t::number> :
       public json_data
     {
     public:
         json_node() :
-          json_data(content_t::integer) {
+          json_data(content_t::number) {
         }
 
     public:
-        void be_integer(int value) override {
+        void be_number(double value) override {
             this->value = value;
         }
 
     public:
-        int to_integer() const override {
+        double to_number() const override {
             return this->value;
         }
 
     public:
         bool to_boolean() const override {
             return static_cast<bool>(this->value);
-        }
-
-        double to_decimal() const override {
-            return static_cast<double>(this->value);
         }
 
         std::string to_string() const override {
@@ -42,8 +38,8 @@ namespace singularity {
         }
 
     private:
-        int value;
+        double value;
     };
 }
 
-#endif//INCLUDE_SINGULARITY_JSON_INTEGER_ONCE_FLAG
+#endif//INCLUDE_SINGULARITY_JSON_NUMBER_ONCE_FLAG

@@ -2,8 +2,7 @@
 #include "json_data.hpp"
 #include "json_null.hpp"
 #include "json_boolean.hpp"
-#include "json_decimal.hpp"
-#include "json_integer.hpp"
+#include "json_number.hpp"
 #include "json_string.hpp"
 #include "json_array.hpp"
 #include "json_object.hpp"
@@ -19,11 +18,8 @@ namespace singularity {
             case content_t::boolean:
                 return detail_t{new json_node<content_t::boolean>};
 
-            case content_t::decimal:
-                return detail_t{new json_node<content_t::decimal>};
-
-            case content_t::integer:
-                return detail_t{new json_node<content_t::integer>};
+            case content_t::number:
+                return detail_t{new json_node<content_t::number>};
 
             case content_t::string:
                 return detail_t{new json_node<content_t::string>};

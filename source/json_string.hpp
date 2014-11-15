@@ -32,12 +32,8 @@ namespace singularity {
             return this->value.empty();
         }
 
-        double to_decimal() const override {
+        double to_number() const override {
             return std::stod(this->value);
-        }
-
-        int to_integer() const override {
-            return std::stoi(this->value);
         }
 
     public:
