@@ -28,6 +28,10 @@ namespace singularity {
         }
 
     public:
+        bool to_boolean() const override {
+            return !this->value.empty();
+        }
+
         std::string to_string() const override {
             return "[object Object]";
         }
@@ -36,7 +40,7 @@ namespace singularity {
         std::string stringify() const override {
             std::stringstream ss;
             for (auto &i : this->value) {
-                ss << ',' << '"' << json_data::escape(i.first) << "\":" << i.second.stringify();
+                ss << ",\"" << json_data::escape(i.first) << "\":" << i.second.stringify();
             }
             return '{' + ss.str().substr(1) + '}';
         }

@@ -29,7 +29,7 @@ namespace singularity {
 
     public:
         bool to_boolean() const override {
-            return this->value.empty();
+            return !this->value.empty();
         }
 
         double to_number() const override {

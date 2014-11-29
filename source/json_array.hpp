@@ -29,6 +29,10 @@ namespace singularity {
         }
 
     public:
+        bool to_boolean() const override {
+            return !this->value.empty();
+        }
+
         std::string to_string() const override {
             std::stringstream ss;
             for (auto &i : this->value) {
