@@ -44,9 +44,11 @@ namespace singularity {
     public: // Initialize by value.
         json(bool value);
 
-        json(int value);
-
         json(double value);
+
+        json(int value) :
+          json(double(value)) {
+        }
 
         json(const std::string &value);
 
@@ -76,12 +78,12 @@ namespace singularity {
         // Get corresponding JSON text.
         std::string stringify() const noexcept;
 
-        // Get node type.
+    public: // Content type.
         content_type type() const noexcept;
 
-    public: // Change node type (by value). Return *this.
         json &be(content_type type);
 
+    public: // Set content value. Return *this.
         json &be_boolean(bool value);
 
         json &be_number(double value);
@@ -98,7 +100,7 @@ namespace singularity {
 
         json &be_object(object_t &&value);
 
-    public: // Shortcuts for changing node type. Return *this.
+    public: // Shortcuts of setting content value. Return *this.
         json &operator=(std::nullptr_t) {
             return this->be(content_type::null);
         }
@@ -159,7 +161,7 @@ namespace singularity {
 
         object_t &as_object();
 
-    public: // Shortcuts for getting content value.
+    public: // Shortcuts of getting content value.
         operator bool() const {
             return this->to_boolean();
         }

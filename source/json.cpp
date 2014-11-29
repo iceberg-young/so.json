@@ -19,11 +19,6 @@ namespace singularity {
         this->data->be_boolean(value);
     }
 
-    json::json(int value) :
-      data(json_data::factory(content_t::number)) {
-        this->data->be_number(value);
-    }
-
     json::json(double value) :
       data(json_data::factory(content_t::number)) {
         this->data->be_number(value);
