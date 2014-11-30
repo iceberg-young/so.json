@@ -5,8 +5,14 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 namespace singularity {
+    namespace json_uh {
+        // Under the Hood
+        class data;
+    }
+
     // Representation of RFC-7159 specified object.
     class json
     {
@@ -22,14 +28,14 @@ namespace singularity {
         };
 
     public:
+        // Implementation type of internal details.
+        using data_t = std::shared_ptr<json_uh::data>;
+
         // Implementation type of content_type::array.
         using array_t = std::vector<json>;
 
         // Implementation type of content_type::object.
         using object_t = std::map<std::string, json>;
-
-        // Implementation type of internal details.
-        using detail_t = std::shared_ptr<class json_data>;
 
     public:
         // Initialize an empty node.
@@ -197,7 +203,16 @@ namespace singularity {
 
     private:
         // The implementation details. Wrapped to minimise interface.
-        detail_t data;
+        data_t data;
+    };
+
+    class json_decode_error :
+      public std::domain_error
+    {
+    public:
+        explicit json_decode_error(const std::string &what) :
+          domain_error(what) {
+        }
     };
 }
 

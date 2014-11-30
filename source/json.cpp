@@ -1,9 +1,11 @@
 #include "json_data.hpp"
-#include "json_builder.hpp"
+#include "json_decode.hpp"
 
 namespace singularity {
+    using namespace json_uh;
+
     json::json(content_t type) noexcept :
-      data(json_data::factory(type)) {
+      data(data::factory(type)) {
     }
 
     json::json(const json &other) :
@@ -15,42 +17,42 @@ namespace singularity {
     }
 
     json::json(bool value) :
-      data(json_data::factory(content_t::boolean)) {
+      data(data::factory(content_t::boolean)) {
         this->data->be_boolean(value);
     }
 
     json::json(double value) :
-      data(json_data::factory(content_t::number)) {
+      data(data::factory(content_t::number)) {
         this->data->be_number(value);
     }
 
     json::json(const std::string &value) :
-      data(json_data::factory(content_t::string)) {
+      data(data::factory(content_t::string)) {
         this->data->be_string(value);
     }
 
     json::json(std::string &&value) :
-      data(json_data::factory(content_t::string)) {
+      data(data::factory(content_t::string)) {
         this->data->be_string(std::move(value));
     }
 
     json::json(const array_t &value) :
-      data(json_data::factory(content_t::array)) {
+      data(data::factory(content_t::array)) {
         this->data->be_array(value);
     }
 
     json::json(array_t &&value) :
-      data(json_data::factory(content_t::array)) {
+      data(data::factory(content_t::array)) {
         this->data->be_array(std::move(value));
     }
 
     json::json(const object_t &value) :
-      data(json_data::factory(content_t::object)) {
+      data(data::factory(content_t::object)) {
         this->data->be_object(value);
     }
 
     json::json(object_t &&value) :
-      data(json_data::factory(content_t::object)) {
+      data(data::factory(content_t::object)) {
         this->data->be_object(std::move(value));
     }
 
@@ -65,7 +67,7 @@ namespace singularity {
     }
 
     json json::parse(const std::string &text) {
-        return json_builder::build(cursor{text.begin(), text.end()});
+        return decode({text.begin(), text.end()});
     }
 
     std::string json::stringify() const noexcept {
@@ -78,7 +80,7 @@ namespace singularity {
 
     json &json::be(content_t type) {
         if (this->data->type != type) {
-            this->data = json_data::factory(type);
+            this->data = data::factory(type);
         }
         return *this;
     }
