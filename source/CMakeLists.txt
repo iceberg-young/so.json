@@ -7,8 +7,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(SOURCE_FILES
     json.cpp
     json_data.cpp
-    json_lexer.cpp
-    json_builder.cpp
+    json_decode.cpp
 )
 
 add_library(singularity.json STATIC ${SOURCE_FILES})
