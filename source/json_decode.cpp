@@ -1,6 +1,5 @@
 #include <locale>
 #include <sstream>
-#include <tgmath.h>
 #include "json_data.hpp"
 #include "json_decode.hpp"
 
@@ -66,7 +65,7 @@ namespace singularity {
         switch (t) {
             case token::null:
                 pass_literals(i, "ull");
-                return json{nullptr};
+                return json{};
 
             case token::boolean_false:
                 pass_literals(i, "alse");
@@ -159,7 +158,6 @@ namespace singularity {
                 fill_object(node, i);
                 break;
         }
-        ++i;
         return node;
     }
 
@@ -172,16 +170,17 @@ namespace singularity {
     double parse_number(cursor &i) {
         sci_t b = i;
         // sign
-        if (*i == '-' or *i == '+') {++i;}
+        if (*i == '-') {++i;}
         // integer
         while (std::isdigit(*i)) {++i;}
         // fraction
         if (*i == '.') {
-            while (std::isdigit(*i)) {++i;}
+            while (std::isdigit(*++i)) {}
         }
         // exponent
         if (*i == 'e') {
-            if (*i == '-' or *i == '+') {++i;}
+            char c = *++i;
+            if (c == '-' or c == '+') {++i;}
             while (std::isdigit(*i)) {++i;}
         }
         return std::stod(std::string{b, i--});
