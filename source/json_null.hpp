@@ -28,8 +28,8 @@ namespace singularity {
             }
 
         public:
-            std::string stringify() const override {
-                return "null";
+            void stringify(std::string &target) const override {
+                target += "null";
             }
 
         public:

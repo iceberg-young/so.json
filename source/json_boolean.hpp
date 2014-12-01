@@ -34,6 +34,11 @@ namespace singularity {
             }
 
         public:
+            void stringify(std::string &target) const override {
+                target += this->value ? "true" : "false";
+            }
+
+        public:
             data_t clone() override {
                 return data_t{new node{*this}};
             }

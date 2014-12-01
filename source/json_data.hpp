@@ -18,7 +18,7 @@ namespace singularity {
             static data_t factory(content_t type);
 
         public:
-            static std::string escape(const std::string &content);
+            static void escape(const std::string &source, std::string &target);
 
         public:
             data(content_t type) :
@@ -83,8 +83,8 @@ namespace singularity {
             }
 
         public:
-            virtual std::string stringify() const {
-                return this->to_string();
+            virtual void stringify(std::string &target) const {
+                target += this->to_string();
             }
 
         public:

@@ -38,8 +38,10 @@ namespace singularity {
             }
 
         public:
-            std::string stringify() const override {
-                return '"' + escape(this->to_string()) + '"';
+            void stringify(std::string &target) const override {
+                target += '"';
+                escape(this->value, target);
+                target += '"';
             }
 
         public:

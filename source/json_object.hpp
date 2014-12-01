@@ -38,17 +38,30 @@ namespace singularity {
             }
 
         public:
-            std::string stringify() const override {
-                std::stringstream ss;
-                for (auto &i : this->value) {
-                    ss << ",\"" << escape(i.first) << "\":" << i.second.stringify();
+            void stringify(std::string &target) const override {
+                target += '{';
+                if (!this->value.empty()) {
+                    auto e = --this->value.end();
+                    for (auto i = this->value.begin(); i != e; ++i) {
+                        append_pair(i->first, i->second, target);
+                        target += ',';
+                    }
+                    append_pair(e->first, e->second, target);
                 }
-                return '{' + ss.str().substr(1) + '}';
+                target += '}';
             }
 
         public:
             data_t clone() override {
                 return data_t{new node{*this}};
+            }
+
+        private:
+            static void append_pair(const std::string &name, const json &value, std::string &target) {
+                target += '"';
+                escape(name, target);
+                target += "\":";
+                value.data->stringify(target);
             }
 
         private:

@@ -1,7 +1,6 @@
 #ifndef INCLUDE_SINGULARITY_JSON_ARRAY_ONCE_FLAG
 #define INCLUDE_SINGULARITY_JSON_ARRAY_ONCE_FLAG
 
-#include <sstream>
 #include "json_data.hpp"
 
 namespace singularity {
@@ -35,20 +34,29 @@ namespace singularity {
             }
 
             std::string to_string() const override {
-                std::stringstream ss;
-                for (auto &i : this->value) {
-                    ss << ',' << i.to_string();
+                std::string s;
+                if (!this->value.empty()) {
+                    auto e = --this->value.end();
+                    for (auto i = this->value.begin(); i != e; ++i) {
+                        (s += i->to_string()) += ',';
+                    }
+                    s += e->to_string();
                 }
-                return ss.str().substr(1);
+                return s;
             }
 
         public:
-            std::string stringify() const override {
-                std::stringstream ss;
-                for (auto &i : this->value) {
-                    ss << ',' << i.stringify();
+            void stringify(std::string &target) const override {
+                target += '[';
+                if (!this->value.empty()) {
+                    auto e = --this->value.end();
+                    for (auto i = this->value.begin(); i != e; ++i) {
+                        i->data->stringify(target);
+                        target += ',';
+                    }
+                    e->data->stringify(target);
                 }
-                return '[' + ss.str().substr(1) + ']';
+                target += ']';
             }
 
         public:

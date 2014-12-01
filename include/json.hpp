@@ -39,7 +39,7 @@ namespace singularity {
 
     public:
         // Initialize an empty node.
-        json(content_type type = content_type::null) noexcept;
+        json(content_type type = content_type::null);
 
         // Clone from the other node.
         json(const json &other);
@@ -82,10 +82,10 @@ namespace singularity {
         json static parse(const std::string &text);
 
         // Get corresponding JSON text.
-        std::string stringify() const noexcept;
+        std::string stringify() const;
 
     public: // Content type.
-        content_type type() const noexcept;
+        content_type type() const;
 
         json &be(content_type type);
 
@@ -201,7 +201,7 @@ namespace singularity {
             return this->as_object();
         }
 
-    private:
+    public:
         // The implementation details. Wrapped to minimise interface.
         data_t data;
     };

@@ -1,4 +1,3 @@
-#include <iomanip>
 #include "json_null.hpp"
 #include "json_boolean.hpp"
 #include "json_number.hpp"
@@ -33,44 +32,45 @@ namespace singularity {
         }
     }
 
-    std::string data::escape(const std::string &content) {
-        std::stringstream ss;
-        ss << std::hex;
-        for (auto c : content) {
+    void data::escape(const std::string &source, std::string &target) {
+        for (auto c : source) {
             if (c < 0x20) {
+                target += '\\';
                 switch (c) {
                     case '\b':
-                        ss << "\\b";
+                        target += 'b';
                         break;
 
                     case '\f':
-                        ss << "\\f";
+                        target += 'f';
                         break;
 
                     case '\n':
-                        ss << "\\n";
+                        target += 'n';
                         break;
 
                     case '\r':
-                        ss << "\\r";
+                        target += 'r';
                         break;
 
                     case '\t':
-                        ss << "\\t";
+                        target += 't';
                         break;
 
-                    default:
-                        ss << "\\u" << std::setfill('0') << std::setw(4) << int(c);
+                    default: {
+                        char buffer[6];
+                        std::sprintf(buffer, "u%04X", c);
+                        target += buffer;
                         break;
+                    }
                 }
             }
             else {
                 if (c == '"' or c == '\\') {
-                    ss << '\\';
+                    target += '\\';
                 }
-                ss << c;
+                target += c;
             }
         }
-        return ss.str();
     }
 }

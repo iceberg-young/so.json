@@ -4,7 +4,7 @@
 namespace singularity {
     using namespace json_uh;
 
-    json::json(content_t type) noexcept :
+    json::json(content_t type) :
       data(data::factory(type)) {
     }
 
@@ -70,11 +70,13 @@ namespace singularity {
         return decode({text.begin(), text.end()});
     }
 
-    std::string json::stringify() const noexcept {
-        return this->data->stringify();
+    std::string json::stringify() const {
+        std::string target;
+        this->data->stringify(target);
+        return target;
     }
 
-    content_t json::type() const noexcept {
+    content_t json::type() const {
         return this->data->type;
     }
 
