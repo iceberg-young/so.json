@@ -6,33 +6,7 @@
 #include "json_object.hpp"
 
 namespace singularity {
-    using namespace json_uh;
-
-    data_t json_node_null{new node<content_t::null>};
-
-    data_t data::factory(content_t type) {
-        switch (type) {
-            case content_t::null:
-                return json_node_null;
-
-            case content_t::boolean:
-                return data_t{new node<content_t::boolean>};
-
-            case content_t::number:
-                return data_t{new node<content_t::number>};
-
-            case content_t::string:
-                return data_t{new node<content_t::string>};
-
-            case content_t::array:
-                return data_t{new node<content_t::array>};
-
-            case content_t::object:
-                return data_t{new node<content_t::object>};
-        }
-    }
-
-    void data::escape(const std::string &source, std::string &target) {
+    void json_data::escape(const std::string& source, std::string& target) {
         for (auto c : source) {
             if (c < 0x20) {
                 target += '\\';
@@ -71,6 +45,30 @@ namespace singularity {
                 }
                 target += c;
             }
+        }
+    }
+
+    extern json::data_t json_null_solo, json_false_solo;
+
+    json::data_t json_data::factory(json::content_type type) {
+        switch (type) {
+            case json::content_type::null:
+                return json_null_solo;
+
+            case json::content_type::boolean:
+                return json_false_solo;
+
+            case json::content_type::number:
+                return json::data_t{new json_number};
+
+            case json::content_type::string:
+                return json::data_t{new json_string};
+
+            case json::content_type::array:
+                return json::data_t{new json_array};
+
+            case json::content_type::object:
+                return json::data_t{new json_object};
         }
     }
 }

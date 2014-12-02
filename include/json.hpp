@@ -8,11 +8,6 @@
 #include <stdexcept>
 
 namespace singularity {
-    namespace json_uh {
-        // Under the Hood
-        class data;
-    }
-
     // Representation of RFC-7159 specified object.
     class json
     {
@@ -28,26 +23,30 @@ namespace singularity {
         };
 
     public:
-        // Implementation type of internal details.
-        using data_t = std::shared_ptr<json_uh::data>;
-
-        // Implementation type of content_type::array.
-        using array_t = std::vector<json>;
+        using pointer_t = std::shared_ptr<json>;
 
         // Implementation type of content_type::object.
-        using object_t = std::map<std::string, json>;
+        using object_t = std::map<std::string, pointer_t>;
+
+        // Implementation type of content_type::array.
+        using array_t = std::vector<pointer_t>;
+
+        // Implementation type of internal details.
+        using data_t = std::shared_ptr<class json_data>;
 
     public:
         // Initialize an empty node.
-        json(content_type type = content_type::null);
+        json(content_type type);
 
         // Clone from the other node.
-        json(const json &other);
+        json(const json& other);
 
         // Steal from the other node.
-        json(json &&other);
+        json(json&& other);
 
     public: // Initialize by value.
+        json(/*null*/);
+
         json(bool value);
 
         json(double value);
@@ -56,30 +55,30 @@ namespace singularity {
           json(double(value)) {
         }
 
-        json(const std::string &value);
+        json(const std::string& value);
 
-        json(std::string &&value);
+        json(std::string&& value);
 
-        json(const char *value) :
+        json(const char* value) :
           json(std::string{value}) {
         }
 
-        json(const array_t &value);
+        json(const array_t& value);
 
-        json(array_t &&value);
+        json(array_t&& value);
 
-        json(const object_t &value);
+        json(const object_t& value);
 
-        json(object_t &&value);
-
-    public:
-        json &operator=(const json &other);
-
-        json &operator=(json &&other);
+        json(object_t&& value);
 
     public:
-        // Initialize from a JSON text.
-        json static parse(const std::string &text);
+        json& operator=(const json& other);
+
+        json& operator=(json&& other);
+
+    public:
+        // Initialize from a JSON text, may throw json_decode_error.
+        static pointer_t parse(const std::string& text);
 
         // Get corresponding JSON text.
         std::string stringify() const;
@@ -87,67 +86,69 @@ namespace singularity {
     public: // Content type.
         content_type type() const;
 
-        json &be(content_type type);
+        json& be(content_type type);
 
     public: // Set content value. Return *this.
-        json &be_boolean(bool value);
+        json& be_null();
 
-        json &be_number(double value);
+        json& be_boolean(bool value);
 
-        json &be_string(const std::string &value);
+        json& be_number(double value);
 
-        json &be_string(std::string &&value);
+        json& be_string(const std::string& value);
 
-        json &be_array(const array_t &value);
+        json& be_string(std::string&& value);
 
-        json &be_array(array_t &&value);
+        json& be_array(const array_t& value);
 
-        json &be_object(const object_t &value);
+        json& be_array(array_t&& value);
 
-        json &be_object(object_t &&value);
+        json& be_object(const object_t& value);
+
+        json& be_object(object_t&& value);
 
     public: // Shortcuts of setting content value. Return *this.
-        json &operator=(std::nullptr_t) {
-            return this->be(content_type::null);
+        json& operator=(std::nullptr_t) {
+            return this->be_null();
         }
 
-        json &operator=(bool value) {
+        json& operator=(bool value) {
             return this->be_boolean(value);
         }
 
-        json &operator=(double value) {
+        json& operator=(double value) {
             return this->be_number(value);
         }
 
-        json &operator=(int value) {
+        json& operator=(int value) {
             return this->be_number(value);
         }
 
-        json &operator=(const std::string &value) {
+        json& operator=(const std::string& value) {
             return this->be_string(value);
         }
 
-        json &operator=(std::string &&value) {
+        json& operator=(std::string&& value) {
             return this->be_string(std::move(value));
         }
 
-        json &operator=(const char *value) {
+        json& operator=(const char* value) {
             return this->be_string(std::string(value));
         }
 
-        json &operator=(const array_t &value) {
+        json& operator=(const array_t& value) {
             return this->be_array(value);
         }
 
-        json &operator=(array_t &&value) {
+        json& operator=(array_t&& value) {
             return this->be_array(std::move(value));
         }
 
-        json &operator=(const object_t &value) {
+        json& operator=(const object_t& value) {
             return this->be_object(value);
         }
 
-        json &operator=(object_t &&value) {
+        json& operator=(object_t&& value) {
             return this->be_object(std::move(value));
         }
 
@@ -163,9 +164,9 @@ namespace singularity {
         object_t to_object() const;
 
     public:
-        array_t &as_array();
+        array_t& as_array();
 
-        object_t &as_object();
+        object_t& as_object();
 
     public: // Shortcuts of getting content value.
         operator bool() const {
@@ -193,11 +194,11 @@ namespace singularity {
         }
 
     public:
-        operator array_t &() {
+        operator array_t&() {
             return this->as_array();
         }
 
-        operator object_t &() {
+        operator object_t&() {
             return this->as_object();
         }
 
@@ -210,7 +211,7 @@ namespace singularity {
       public std::domain_error
     {
     public:
-        explicit json_decode_error(const std::string &what) :
+        explicit json_decode_error(const std::string& what) :
           domain_error(what) {
         }
     };

@@ -4,70 +4,54 @@
 #include "json_data.hpp"
 
 namespace singularity {
-    namespace json_uh {
-        template<>
-        class node<content_t::array> :
-          public data
-        {
-        public:
-            node() :
-              data(content_t::array) {
-            }
+    class json_array :
+      public json_data
+    {
+    public:
+        json_array() :
+          json_data(json::content_type::array) {
+        }
 
-        public:
-            void be_array(const array_t &value) override {
-                this->value = value;
-            }
+        json_array(const json::array_t& value) :
+          json_data(json::content_type::array),
+          value(value) {
+        }
 
-            void be_array(array_t &&value) override {
-                this->value.swap(value);
-            }
+        json_array(json::array_t&& value) :
+          json_data(json::content_type::array),
+          value(std::move(value)) {
+        }
 
-        public:
-            array_t &to_array() override {
-                return this->value;
-            }
+        json::data_t clone() override {
+            return json::data_t{new json_array{*this}};
+        }
 
-        public:
-            bool to_boolean() const override {
-                return !this->value.empty();
-            }
+    public:
+        void be_array(const json::array_t& value) override {
+            this->value = value;
+        }
 
-            std::string to_string() const override {
-                std::string s;
-                if (!this->value.empty()) {
-                    auto e = --this->value.end();
-                    for (auto i = this->value.begin(); i != e; ++i) {
-                        (s += i->to_string()) += ',';
-                    }
-                    s += e->to_string();
-                }
-                return s;
-            }
+        void be_array(json::array_t&& value) override {
+            this->value.swap(value);
+        }
 
-        public:
-            void stringify(std::string &target) const override {
-                target += '[';
-                if (!this->value.empty()) {
-                    auto e = --this->value.end();
-                    for (auto i = this->value.begin(); i != e; ++i) {
-                        i->data->stringify(target);
-                        target += ',';
-                    }
-                    e->data->stringify(target);
-                }
-                target += ']';
-            }
+        json::array_t& to_array() override {
+            return this->value;
+        }
 
-        public:
-            data_t clone() override {
-                return data_t{new node{*this}};
-            }
+    public:
+        bool to_boolean() const override {
+            return !this->value.empty();
+        }
 
-        private:
-            array_t value;
-        };
-    }
+        std::string to_string() const override;
+
+    public:
+        void stringify(std::string& target) const override;
+
+    private:
+        json::array_t value;
+    };
 }
 
 #endif//INCLUDE_SINGULARITY_JSON_ARRAY_ONCE_FLAG

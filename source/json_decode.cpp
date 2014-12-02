@@ -1,3 +1,4 @@
+#include <list>
 #include <locale>
 #include <sstream>
 #include "json_data.hpp"
@@ -6,22 +7,22 @@
 namespace singularity {
     using namespace json_uh;
 
-    json cascade(token t, cursor &i);
+    json::pointer_t cascade(token t, cursor& i);
 
-    double parse_number(cursor &i);
+    double parse_number(cursor& i);
 
-    std::string parse_string(cursor &i);
+    std::string parse_string(cursor& i);
 
     const std::locale c_locale{"C"};
 
     // Cursor information for debug.
-    std::stringstream &operator<<(std::stringstream &ss, const cursor &i) {
+    std::stringstream& operator<<(std::stringstream& ss, const cursor& i) {
         ss << '[' << i.position() << ':' << *i << '(' << int(*i) << ")]";
         return ss;
     }
 
     // Guess type of next node.
-    token next(cursor &i) {
+    token next(cursor& i) {
         while (std::isspace(*i, c_locale)) {++i;}
         switch (char c = *i) {
             case 'n': // null
@@ -50,7 +51,7 @@ namespace singularity {
     }
 
     // Move cursor over the expected literals.
-    void pass_literals(cursor &i, const std::string &expected) {
+    void pass_literals(cursor& i, const std::string& expected) {
         for (auto c : expected) {
             if (c != *++i) {
                 std::stringstream ss;
@@ -61,31 +62,31 @@ namespace singularity {
     }
 
     // Create a node start from the cursor.
-    json create(token t, cursor &i) {
+    json::pointer_t create(token t, cursor& i) {
         switch (t) {
             case token::null:
                 pass_literals(i, "ull");
-                return json{};
+                return json::pointer_t{new json{}};
 
             case token::boolean_false:
                 pass_literals(i, "alse");
-                return json{false};
+                return json::pointer_t{new json{false}};
 
             case token::boolean_true:
                 pass_literals(i, "rue");
-                return json{true};
+                return json::pointer_t{new json{true}};
 
             case token::number:
-                return json{parse_number(i)};
+                return json::pointer_t{new json{parse_number(i)}};
 
             case token::string:
-                return json{parse_string(i)};
+                return json::pointer_t{new json{parse_string(i)}};
 
             case token::array_begin:
-                return json{json::content_type::array};
+                return json::pointer_t{new json{json::content_type::array}};
 
             case token::object_begin:
-                return json{json::content_type::object};
+                return json::pointer_t{new json{json::content_type::object}};
 
             default: {
                 std::stringstream ss;
@@ -96,7 +97,7 @@ namespace singularity {
     }
 
     // Check value separator take post.
-    bool separated(token t, bool &s, const cursor &i) {
+    bool separated(token t, bool& s, const cursor& i) {
         if (!s and t != token::value_separator) {
             std::stringstream ss;
             ss << i << " value separator (,) is expected.";
@@ -105,21 +106,21 @@ namespace singularity {
         return !(s = !s);
     }
 
-    void fill_array(json &array, cursor &i) {
+    void fill_array(json::pointer_t& array, cursor& i) {
         token t;
         bool s = true;
-        json::array_t &a = array;
+        json::array_t& a = array->as_array();
         while (token::array_end != (t = next(++i))) {
             if (separated(t, s, i)) {
-                a.push_back(cascade(t, i));
+                a.emplace_back(cascade(t, i));
             }
         }
     }
 
-    void fill_object(json &object, cursor &i) {
+    void fill_object(json::pointer_t& object, cursor& i) {
         token tn;
         bool s = true;
-        json::object_t &o = object;
+        json::object_t& o = object->as_object();
         while (token::object_end != (tn = next(++i))) {
             if (separated(tn, s, i)) {
                 // name
@@ -128,7 +129,7 @@ namespace singularity {
                     ss << i << " name (string) is expected.";
                     throw json_decode_error{ss.str()};
                 }
-                auto name = create(tn, i);
+                auto name = parse_string(i);
 
                 // separator (:)
                 auto ts = next(++i);
@@ -147,9 +148,9 @@ namespace singularity {
     }
 
     // Cascade create node.
-    json cascade(token t, cursor &i) {
-        json node = create(t, i);
-        switch (node.type()) {
+    json::pointer_t cascade(token t, cursor& i) {
+        json::pointer_t node = create(t, i);
+        switch (node->type()) {
             case json::content_type::array:
                 fill_array(node, i);
                 break;
@@ -161,13 +162,13 @@ namespace singularity {
         return node;
     }
 
-    json json_uh::decode(const cursor &c) {
+    json::pointer_t json_uh::decode(const cursor& c) {
         auto i = c;
         auto token = next(i);
         return cascade(token, i);
     }
 
-    double parse_number(cursor &i) {
+    double parse_number(cursor& i) {
         sci_t b = i;
         // sign
         if (*i == '-') {++i;}
@@ -186,7 +187,7 @@ namespace singularity {
         return std::stod(std::string{b, i--});
     }
 
-    std::string parse_string(cursor &i) {
+    std::string parse_string(cursor& i) {
         std::stringstream ss;
         while (*++i != '"') {
             char c = *i;

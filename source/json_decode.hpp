@@ -58,7 +58,7 @@ namespace singularity {
             value_separator = ',',
         };
 
-        json decode(const cursor &c);
+        json::pointer_t decode(const cursor &c);
     };
 }
 

@@ -4,44 +4,45 @@
 #include "json_data.hpp"
 
 namespace singularity {
-    namespace json_uh {
-        template<>
-        class node<content_t::number> :
-          public data
-        {
-        public:
-            node() :
-              data(content_t::number) {
-            }
+    class json_number :
+      public json_data
+    {
+    public:
+        json_number() :
+          json_data(json::content_type::number) {
+        }
 
-        public:
-            void be_number(double value) override {
-                this->value = value;
-            }
+        json_number(double value) :
+          json_data(json::content_type::number),
+          value(value) {
+        }
 
-        public:
-            double to_number() const override {
-                return this->value;
-            }
+        json::data_t clone() override {
+            return json::data_t{new json_number{*this}};
+        }
 
-        public:
-            bool to_boolean() const override {
-                return static_cast<bool>(this->value);
-            }
+    public:
+        void be_number(double value) override {
+            this->value = value;
+        }
 
-            std::string to_string() const override {
-                return std::to_string(this->value);
-            }
+        double to_number() const override {
+            return this->value;
+        }
 
-        public:
-            data_t clone() override {
-                return data_t{new node{*this}};
-            }
+    public:
+        bool to_boolean() const override {
+            return static_cast<bool>(this->value);
+        }
 
-        private:
-            double value;
-        };
-    }
+        std::string to_string() const override;
+
+    public:
+        void stringify(std::string& target) const override;
+
+    private:
+        double value;
+    };
 }
 
 #endif//INCLUDE_SINGULARITY_JSON_NUMBER_ONCE_FLAG

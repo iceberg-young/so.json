@@ -4,40 +4,32 @@
 #include "json_data.hpp"
 
 namespace singularity {
-    namespace json_uh {
-        template<>
-        class node<content_t::null> :
-          public data
-        {
-        public:
-            node() :
-              data(content_t::null) {
-            }
+    class json_null :
+      public json_data
+    {
+    public:
+        json_null() :
+          json_data(json::content_type::null) {
+        }
 
-        public:
-            bool to_boolean() const override {
-                return false;
-            }
+    public:
+        bool to_boolean() const override {
+            return false;
+        }
 
-            double to_number() const override {
-                return 0.0;
-            }
+        double to_number() const override {
+            return 0.0;
+        }
 
-            std::string to_string() const override {
-                return "";
-            }
+        std::string to_string() const override {
+            return "";
+        }
 
-        public:
-            void stringify(std::string &target) const override {
-                target += "null";
-            }
-
-        public:
-            data_t clone() override {
-                return this->shared_from_this();
-            }
-        };
-    }
+    public:
+        void stringify(std::string& target) const override {
+            target += "null";
+        }
+    };
 }
 
 #endif//INCLUDE_SINGULARITY_JSON_NULL_ONCE_FLAG

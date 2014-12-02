@@ -2,105 +2,87 @@
 #define INCLUDE_SINGULARITY_JSON_DATA_ONCE_FLAG
 
 #include <typeinfo>
-#include "json.hpp"
+#include "../include/json.hpp"
 
 namespace singularity {
-    namespace json_uh {
-        using data_t = json::data_t;
-        using array_t = json::array_t;
-        using object_t = json::object_t;
-        using content_t = json::content_type;
+    class json_data :
+      public std::enable_shared_from_this<json_data>
+    {
+    public:
+        static void escape(const std::string& source, std::string& target);
 
-        class data :
-          public std::enable_shared_from_this<data>
-        {
-        public:
-            static data_t factory(content_t type);
+        static json::data_t factory(json::content_type type);
 
-        public:
-            static void escape(const std::string &source, std::string &target);
+    public:
+        json_data(json::content_type type) :
+          type(type) {
+        }
 
-        public:
-            data(content_t type) :
-              type(type) {
-            }
+        virtual ~json_data() {
+        }
 
-            virtual ~data() {
-            }
+        virtual json::data_t clone() {
+            return this->shared_from_this();
+        }
 
-        public:
-            virtual void be_boolean(bool value) {
-                throw std::bad_cast{};
-            }
+    public:
+        virtual void be_number(double value) {
+            throw std::bad_cast{};
+        }
 
-            virtual void be_number(double value) {
-                throw std::bad_cast{};
-            }
+        virtual void be_string(const std::string& value) {
+            throw std::bad_cast{};
+        }
 
-            virtual void be_string(const std::string &value) {
-                throw std::bad_cast{};
-            }
+        virtual void be_string(std::string&& value) {
+            throw std::bad_cast{};
+        }
 
-            virtual void be_string(std::string &&value) {
-                throw std::bad_cast{};
-            }
+        virtual void be_array(const json::array_t& value) {
+            throw std::bad_cast{};
+        }
 
-            virtual void be_array(const array_t &value) {
-                throw std::bad_cast{};
-            }
+        virtual void be_array(json::array_t&& value) {
+            throw std::bad_cast{};
+        }
 
-            virtual void be_array(array_t &&value) {
-                throw std::bad_cast{};
-            }
+        virtual void be_object(const json::object_t& value) {
+            throw std::bad_cast{};
+        }
 
-            virtual void be_object(const object_t &value) {
-                throw std::bad_cast{};
-            }
+        virtual void be_object(json::object_t&& value) {
+            throw std::bad_cast{};
+        }
 
-            virtual void be_object(object_t &&value) {
-                throw std::bad_cast{};
-            }
+    public:
+        virtual bool to_boolean() const {
+            throw std::bad_cast{};
+        }
 
-        public:
-            virtual bool to_boolean() const {
-                throw std::bad_cast{};
-            }
+        virtual double to_number() const {
+            throw std::bad_cast{};
+        }
 
-            virtual double to_number() const {
-                throw std::bad_cast{};
-            }
+        virtual std::string to_string() const {
+            throw std::bad_cast{};
+        }
 
-            virtual std::string to_string() const {
-                throw std::bad_cast{};
-            }
+        virtual json::array_t& to_array() {
+            throw std::bad_cast{};
+        }
 
-            virtual array_t &to_array() {
-                throw std::bad_cast{};
-            }
+        virtual json::object_t& to_object() {
+            throw std::bad_cast{};
+        }
 
-            virtual object_t &to_object() {
-                throw std::bad_cast{};
-            }
+    public:
+        virtual void stringify(std::string& target) const {
+            target += this->to_string();
+        }
 
-        public:
-            virtual void stringify(std::string &target) const {
-                target += this->to_string();
-            }
-
-        public:
-            virtual data_t clone() = 0;
-
-        public:
-            const content_t type;
-        };
-
-        template<content_t>
-        class node :
-          public data
-        {
-            // Not used
-        };
-    }
+    public:
+        const json::content_type type;
+    };
 }
 
 #endif//INCLUDE_SINGULARITY_JSON_DATA_ONCE_FLAG
