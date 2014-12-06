@@ -5,43 +5,6 @@
 
 namespace singularity {
     namespace json_uh {
-        using sci_t = std::string::const_iterator;
-
-        class cursor :
-          public sci_t
-        {
-        public:
-            cursor(sci_t &&begin, const sci_t &end) :
-              sci_t(begin),
-              begin(begin),
-              end(end) {
-            }
-
-        public:
-            cursor &operator++() {
-                if (*this == this->end) {
-                    throw std::out_of_range{"Already reached the end."};
-                }
-                sci_t::operator++();
-                return *this;
-            }
-
-            cursor &operator=(const cursor &other) {
-                *static_cast<sci_t *>(this) = other;
-                return *this;
-            }
-
-        public:
-            long position() const {
-                return *static_cast<const sci_t *>(this) - this->begin;
-            }
-
-        private:
-            const sci_t &begin;
-
-            const sci_t &end;
-        };
-
         enum class token :
           char
         {
@@ -58,7 +21,11 @@ namespace singularity {
             value_separator = ',',
         };
 
-        json::pointer_t decode(const cursor &c);
+        using cursor = json_data::cursor;
+
+        json::pointer_t cascade(token t, cursor& i);
+
+        token next(cursor& i);
     };
 }
 

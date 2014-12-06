@@ -1,11 +1,16 @@
-#include "json_null.hpp"
-#include "json_boolean.hpp"
 #include "json_number.hpp"
 #include "json_string.hpp"
 #include "json_array.hpp"
 #include "json_object.hpp"
+#include "json_decode.hpp"
 
 namespace singularity {
+    json::pointer_t json_data::decode(cursor& c) {
+        auto i = c;
+        auto token = json_uh::next(i);
+        return json_uh::cascade(token, i);
+    }
+
     void json_data::escape(const std::string& source, std::string& target) {
         for (auto c : source) {
             if (c < 0x20) {
@@ -46,6 +51,43 @@ namespace singularity {
                 target += c;
             }
         }
+    }
+
+    std::string json_data::un_escape(cursor& i) {
+        std::string target;
+        while (*++i != '"') {
+            char c = *i;
+            if (c == '\\') {
+                switch (c = *++i) {
+                    case 'b':
+                        c = '\b';
+                        break;
+
+                    case 'f':
+                        c = '\f';
+                        break;
+
+                    case 'n':
+                        c = '\n';
+                        break;
+
+                    case 'r':
+                        c = '\r';
+                        break;
+
+                    case 't':
+                        c = '\t';
+                        break;
+
+                    case 'u':
+                        i += 4;
+                        // TODO
+                        continue;
+                }
+            }
+            target += c;
+        }
+        return target;
     }
 
     extern json::data_t json_null_solo, json_false_solo;
