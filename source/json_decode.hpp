@@ -32,23 +32,23 @@ namespace singularity {
         }
 
     public:
-        json::pointer_t run() {
+        json run() {
             --this->iterator;
             return this->cascade(this->next());
         }
 
     protected:
         // Cascade create node.
-        json::pointer_t cascade(token t);
+        json cascade(token t);
 
         // Create a node start from the iterator.
-        json::pointer_t create(token t);
+        json create(token t);
 
         // Create children for an array node.
-        void fill_array(json::pointer_t& array);
+        void fill_children(json::array_t& array);
 
         // Create children for an object node.
-        void fill_object(json::pointer_t& object);
+        void fill_children(json::object_t& object);
 
         // Move iterator over the expected literals.
         void pass_literals(const std::string& expected);

@@ -42,10 +42,10 @@ namespace singularity {
         if (!this->value.empty()) {
             auto e = --this->value.end();
             for (auto i = this->value.begin(); i != e; ++i) {
-                append_pair(i->first, *i->second, target);
+                append_pair(i->first, i->second, target);
                 target += ',';
             }
-            append_pair(e->first, *e->second, target);
+            append_pair(e->first, e->second, target);
         }
         target += '}';
     }

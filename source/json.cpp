@@ -24,7 +24,7 @@ namespace singularity {
         return *this;
     }
 
-    json::pointer_t json::parse(json_decode::iterator_t& iterator) {
+    json json::parse(json_decode::iterator_t& iterator) {
         json_decode decoder(iterator);
         return decoder.run();
     }

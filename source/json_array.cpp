@@ -42,9 +42,9 @@ namespace singularity {
         if (!this->value.empty()) {
             auto e = --this->value.end();
             for (auto i = this->value.begin(); i != e; ++i) {
-                (s += (*i)->to_string()) += ',';
+                (s += i->data->to_string()) += ',';
             }
-            s += (*e)->to_string();
+            s += e->data->to_string();
         }
         return s;
     }
@@ -54,10 +54,10 @@ namespace singularity {
         if (!this->value.empty()) {
             auto e = --this->value.end();
             for (auto i = this->value.begin(); i != e; ++i) {
-                (*i)->data->stringify(target);
+                i->data->stringify(target);
                 target += ',';
             }
-            (*e)->data->stringify(target);
+            e->data->stringify(target);
         }
         target += ']';
     }

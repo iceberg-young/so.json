@@ -1,46 +1,47 @@
+#include <list>
 #include "json_data.hpp"
 #include "json_decode.hpp"
 
 namespace singularity {
-    json::pointer_t json_decode::cascade(token t) {
-        json::pointer_t node = this->create(t);
-        switch (node->type()) {
+    json json_decode::cascade(token t) {
+        json node = this->create(t);
+        switch (node.type()) {
             case json::content_type::array:
-                this->fill_array(node);
+                this->fill_children(node.as_array());
                 break;
 
             case json::content_type::object:
-                this->fill_object(node);
+                this->fill_children(node.as_object());
                 break;
         }
         return node;
     }
 
-    json::pointer_t json_decode::create(token t) {
+    json json_decode::create(token t) {
         switch (t) {
             case token::null:
                 this->pass_literals("ull");
-                return json::pointer_t{new json{}};
+                return json{};
 
             case token::boolean_false:
                 this->pass_literals("alse");
-                return json::pointer_t{new json{false}};
+                return json{false};
 
             case token::boolean_true:
                 this->pass_literals("rue");
-                return json::pointer_t{new json{true}};
+                return json{true};
 
             case token::number:
-                return json::pointer_t{new json{this->parse_number()}};
+                return json{this->parse_number()};
 
             case token::string:
-                return json::pointer_t{new json{json_data::un_escape(this->iterator)}};
+                return json{json_data::un_escape(this->iterator)};
 
             case token::array_begin:
-                return json::pointer_t{new json{json::content_type::array}};
+                return json{json::content_type::array};
 
             case token::object_begin:
-                return json::pointer_t{new json{json::content_type::object}};
+                return json{json::content_type::object};
 
             default: {
                 throw json_decode_error{this->dump() + " invalid node type."};
@@ -48,21 +49,19 @@ namespace singularity {
         }
     }
 
-    void json_decode::fill_array(json::pointer_t& array) {
+    void json_decode::fill_children(json::array_t& array) {
         token t;
         bool s = true;
-        json::array_t& a = array->as_array();
         while (token::array_end != (t = this->next())) {
             if (this->separated(t, s)) {
-                a.emplace_back(this->cascade(t));
+                array.emplace_back(this->cascade(t));
             }
         }
     }
 
-    void json_decode::fill_object(json::pointer_t& object) {
+    void json_decode::fill_children(json::object_t& object) {
         token tn;
         bool s = true;
-        json::object_t& o = object->as_object();
         while (token::object_end != (tn = this->next())) {
             if (separated(tn, s)) {
                 // name
@@ -80,7 +79,7 @@ namespace singularity {
                 // value
                 auto tv = this->next();
                 auto value = this->cascade(tv);
-                o.insert(std::make_pair(name, value));
+                object.emplace(std::make_pair(name, std::move(value)));
             }
         }
     }
