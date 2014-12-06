@@ -1,4 +1,5 @@
 #include "json_data.hpp"
+#include "json_decode.hpp"
 
 namespace singularity {
     json::json(content_type type) :
@@ -23,13 +24,9 @@ namespace singularity {
         return *this;
     }
 
-    json::pointer_t json::parse(const std::string& text) {
-        auto iterator = text.cbegin();
-        return json_data::decode(iterator);
-    }
-
-    json::pointer_t json::parse(json_data::cursor& iterator) {
-        return json_data::decode(iterator);
+    json::pointer_t json::parse(json_decode::iterator_t& iterator) {
+        json_decode decoder(iterator);
+        return decoder.run();
     }
 
     std::string json::stringify() const {

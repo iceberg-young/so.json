@@ -78,9 +78,12 @@ namespace singularity {
 
     public:
         // Initialize from a JSON text, may throw json_decode_error.
-        static pointer_t parse(const std::string& text);
-
         static pointer_t parse(std::string::const_iterator& iterator);
+
+        static pointer_t parse(const std::string& text) {
+            auto iterator = text.cbegin();
+            return json::parse(iterator);
+        }
 
         // Get corresponding JSON text.
         std::string stringify() const;

@@ -5,12 +5,6 @@
 #include "json_decode.hpp"
 
 namespace singularity {
-    json::pointer_t json_data::decode(cursor& c) {
-        auto i = c;
-        auto token = json_uh::next(i);
-        return json_uh::cascade(token, i);
-    }
-
     void json_data::escape(const std::string& source, std::string& target) {
         for (auto c : source) {
             if (c < 0x20) {
@@ -53,7 +47,7 @@ namespace singularity {
         }
     }
 
-    std::string json_data::un_escape(cursor& i) {
+    std::string json_data::un_escape(typename std::string::const_iterator& i) {
         std::string target;
         while (*++i != '"') {
             char c = *i;

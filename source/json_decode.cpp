@@ -2,166 +2,152 @@
 #include "json_decode.hpp"
 
 namespace singularity {
-    namespace json_uh {
-        double parse_number(cursor& i);
+    json::pointer_t json_decode::cascade(token t) {
+        json::pointer_t node = this->create(t);
+        switch (node->type()) {
+            case json::content_type::array:
+                this->fill_array(node);
+                break;
 
-        // Cursor information for debug.
-        std::string dump_cursor(const cursor& i) {
-            std::string dump;
-            dump += '[';
-            dump += *i;
-            dump += ':';
-            dump += int(*i);
-            dump += ']';
-            return dump;
+            case json::content_type::object:
+                this->fill_object(node);
+                break;
         }
+        return node;
+    }
 
-        // Guess type of next node.
-        token next(cursor& i) {
-            while (std::isspace(*i)) {++i;}
-            switch (char c = *i) {
-                case 'n': // null
-                case 'f': // false
-                case 't': // true
-                case '-': // number
-                case '"': // string
-                case '[': // array begin
-                case ']': // array end
-                case '{': // object begin
-                case '}': // object end
-                case ':': // name separator
-                case ',': // value separator
-                    return static_cast<token>(c);
+    json::pointer_t json_decode::create(token t) {
+        switch (t) {
+            case token::null:
+                this->pass_literals("ull");
+                return json::pointer_t{new json{}};
 
-                default:
-                    if (std::isdigit(c)) {
-                        return token::number;
-                    }
-                    else {
-                        throw json_decode_error{dump_cursor(i) + " invalid literal."};
-                    }
+            case token::boolean_false:
+                this->pass_literals("alse");
+                return json::pointer_t{new json{false}};
+
+            case token::boolean_true:
+                this->pass_literals("rue");
+                return json::pointer_t{new json{true}};
+
+            case token::number:
+                return json::pointer_t{new json{this->parse_number()}};
+
+            case token::string:
+                return json::pointer_t{new json{json_data::un_escape(this->iterator)}};
+
+            case token::array_begin:
+                return json::pointer_t{new json{json::content_type::array}};
+
+            case token::object_begin:
+                return json::pointer_t{new json{json::content_type::object}};
+
+            default: {
+                throw json_decode_error{this->dump() + " invalid node type."};
             }
         }
+    }
 
-        // Move cursor over the expected literals.
-        void pass_literals(cursor& i, const std::string& expected) {
-            for (auto c : expected) {
-                if (c != *++i) {
-                    throw json_decode_error{dump_cursor(i) + " expected: " + c};
+    void json_decode::fill_array(json::pointer_t& array) {
+        token t;
+        bool s = true;
+        json::array_t& a = array->as_array();
+        while (token::array_end != (t = this->next())) {
+            if (this->separated(t, s)) {
+                a.emplace_back(this->cascade(t));
+            }
+        }
+    }
+
+    void json_decode::fill_object(json::pointer_t& object) {
+        token tn;
+        bool s = true;
+        json::object_t& o = object->as_object();
+        while (token::object_end != (tn = this->next())) {
+            if (separated(tn, s)) {
+                // name
+                if (tn != token::string) {
+                    throw json_decode_error{this->dump() + " name (string) is expected."};
                 }
-            }
-        }
+                auto name = json_data::un_escape(this->iterator);
 
-        // Create a node start from the cursor.
-        json::pointer_t create(token t, cursor& i) {
-            switch (t) {
-                case token::null:
-                    pass_literals(i, "ull");
-                    return json::pointer_t{new json{}};
-
-                case token::boolean_false:
-                    pass_literals(i, "alse");
-                    return json::pointer_t{new json{false}};
-
-                case token::boolean_true:
-                    pass_literals(i, "rue");
-                    return json::pointer_t{new json{true}};
-
-                case token::number:
-                    return json::pointer_t{new json{parse_number(i)}};
-
-                case token::string:
-                    return json::pointer_t{new json{json_data::un_escape(i)}};
-
-                case token::array_begin:
-                    return json::pointer_t{new json{json::content_type::array}};
-
-                case token::object_begin:
-                    return json::pointer_t{new json{json::content_type::object}};
-
-                default: {
-                    throw json_decode_error{dump_cursor(i) + " invalid node type."};
+                // separator (:)
+                auto ts = this->next();
+                if (ts != token::name_separator) {
+                    throw json_decode_error{this->dump() + " name separator (:) is expected."};
                 }
+
+                // value
+                auto tv = this->next();
+                auto value = this->cascade(tv);
+                o.insert(std::make_pair(name, value));
             }
         }
+    }
 
-        // Check value separator take post.
-        bool separated(token t, bool& s, const cursor& i) {
-            if (!s and t != token::value_separator) {
-                throw json_decode_error{dump_cursor(i) + " value separator (,) is expected."};
+    void json_decode::pass_literals(const std::string& expected) {
+        for (auto c : expected) {
+            if (c != *++this->iterator) {
+                throw json_decode_error{this->dump() + " expected: " + c};
             }
-            return !(s = !s);
         }
+    }
 
-        void fill_array(json::pointer_t& array, cursor& i) {
-            token t;
-            bool s = true;
-            json::array_t& a = array->as_array();
-            while (token::array_end != (t = next(++i))) {
-                if (separated(t, s, i)) {
-                    a.emplace_back(cascade(t, i));
+    double json_decode::parse_number() {
+        iterator_t head = this->iterator;
+        // sign
+        if (*this->iterator == '-') {++this->iterator;}
+        // integer
+        while (std::isdigit(*this->iterator)) {++this->iterator;}
+        // fraction
+        if (*this->iterator == '.') {
+            while (std::isdigit(*++this->iterator)) {}
+        }
+        // exponent
+        if (*this->iterator == 'e') {
+            char c = *++this->iterator;
+            if (c == '-' or c == '+') {++this->iterator;}
+            while (std::isdigit(*this->iterator)) {++this->iterator;}
+        }
+        return std::stod(std::string{head, this->iterator--});
+    }
+
+    std::string json_decode::dump() {
+        auto c = std::to_string(int(*this->iterator));
+        auto d = std::to_string(this->iterator - this->begin);
+        return '[' + c + ':' + '@' + d + ']';
+    }
+
+    json_decode::token json_decode::next() {
+        while (std::isspace(*++this->iterator)) {}
+        switch (char c = *this->iterator) {
+            case 'n': // null
+            case 'f': // false
+            case 't': // true
+            case '-': // number
+            case '"': // string
+            case '[': // array begin
+            case ']': // array end
+            case '{': // object begin
+            case '}': // object end
+            case ':': // name separator
+            case ',': // value separator
+                return static_cast<token>(c);
+
+            default:
+                if (std::isdigit(c)) {
+                    return token::number;
                 }
-            }
-        }
-
-        void fill_object(json::pointer_t& object, cursor& i) {
-            token tn;
-            bool s = true;
-            json::object_t& o = object->as_object();
-            while (token::object_end != (tn = next(++i))) {
-                if (separated(tn, s, i)) {
-                    // name
-                    if (tn != token::string) {
-                        throw json_decode_error{dump_cursor(i) + " name (string) is expected."};
-                    }
-                    auto name = json_data::un_escape(i);
-
-                    // separator (:)
-                    auto ts = next(++i);
-                    if (ts != token::name_separator) {
-                        throw json_decode_error{dump_cursor(i) + " name separator (:) is expected."};
-                    }
-
-                    // value
-                    auto tv = next(++i);
-                    auto value = cascade(tv, i);
-                    o.insert(std::make_pair(name, value));
+                else {
+                    throw json_decode_error{this->dump() + " invalid literal."};
                 }
-            }
         }
+    }
 
-        // Cascade create node.
-        json::pointer_t cascade(token t, cursor& i) {
-            json::pointer_t node = create(t, i);
-            switch (node->type()) {
-                case json::content_type::array:
-                    fill_array(node, i);
-                    break;
-
-                case json::content_type::object:
-                    fill_object(node, i);
-                    break;
-            }
-            return node;
+    bool json_decode::separated(token t, bool& s) {
+        if (!s and t != token::value_separator) {
+            throw json_decode_error{this->dump() + " value separator (,) is expected."};
         }
-
-        double parse_number(cursor& i) {
-            cursor b = i;
-            // sign
-            if (*i == '-') {++i;}
-            // integer
-            while (std::isdigit(*i)) {++i;}
-            // fraction
-            if (*i == '.') {
-                while (std::isdigit(*++i)) {}
-            }
-            // exponent
-            if (*i == 'e') {
-                char c = *++i;
-                if (c == '-' or c == '+') {++i;}
-                while (std::isdigit(*i)) {++i;}
-            }
-            return std::stod(std::string{b, i--});
-        }
+        return !(s = !s);
     }
 }

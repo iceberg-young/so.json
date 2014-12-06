@@ -9,14 +9,9 @@ namespace singularity {
       public std::enable_shared_from_this<json_data>
     {
     public:
-        using cursor = std::string::const_iterator;
-
-    public:
-        static json::pointer_t decode(cursor& c);
-
         static void escape(const std::string& source, std::string& target);
 
-        static std::string un_escape(cursor& i);
+        static std::string un_escape(std::string::const_iterator& i);
 
         static json::data_t factory(json::content_type type);
 
