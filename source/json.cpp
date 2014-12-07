@@ -10,8 +10,8 @@ namespace singularity {
       data(other.data->clone()) {
     }
 
-    json::json(json&& other) {
-        this->data.swap(other.data);
+    json::json(json&& other) :
+      data(std::move(other.data)) {
     }
 
     json& json::operator=(const json& other) {
@@ -24,7 +24,7 @@ namespace singularity {
         return *this;
     }
 
-    json json::parse(json_decode::iterator_t& iterator) {
+    json json::parse(literal_t& iterator) {
         json_decode decoder(iterator);
         return decoder.run();
     }

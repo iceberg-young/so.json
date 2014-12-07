@@ -29,6 +29,9 @@ namespace singularity {
         void stringify(std::string& target) const override {
             target += "null";
         }
+
+    public:
+        static json::data_t solo;
     };
 }
 

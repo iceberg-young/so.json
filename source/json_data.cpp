@@ -1,8 +1,9 @@
+#include "json_null.hpp"
+#include "json_boolean.hpp"
 #include "json_number.hpp"
 #include "json_string.hpp"
 #include "json_array.hpp"
 #include "json_object.hpp"
-#include "json_decode.hpp"
 
 namespace singularity {
     void json_data::escape(const std::string& source, std::string& target) {
@@ -47,7 +48,7 @@ namespace singularity {
         }
     }
 
-    std::string json_data::un_escape(typename std::string::const_iterator& i) {
+    std::string json_data::un_escape(json::literal_t& i) {
         std::string target;
         while (*++i != '"') {
             char c = *i;
@@ -84,15 +85,13 @@ namespace singularity {
         return target;
     }
 
-    extern json::data_t json_null_solo, json_false_solo;
-
     json::data_t json_data::factory(json::content_type type) {
         switch (type) {
             case json::content_type::null:
-                return json_null_solo;
+                return json_null::solo;
 
             case json::content_type::boolean:
-                return json_false_solo;
+                return json_false::solo;
 
             case json::content_type::number:
                 return json::data_t{new json_number};

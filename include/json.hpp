@@ -11,6 +11,8 @@ namespace singularity {
     // Representation of RFC-7159 specified object.
     class json
     {
+        friend class json_decode;
+
     public:
         enum class content_type
         {
@@ -23,6 +25,8 @@ namespace singularity {
         };
 
     public:
+        using literal_t = std::string::const_iterator;
+
         // Implementation type of content_type::object.
         using object_t = std::map<std::string, json>;
 
@@ -76,7 +80,7 @@ namespace singularity {
 
     public:
         // Initialize from a JSON text, may throw json_decode_error.
-        static json parse(std::string::const_iterator& iterator);
+        static json parse(literal_t& iterator);
 
         static json parse(const std::string& text) {
             auto iterator = text.cbegin();
@@ -203,6 +207,11 @@ namespace singularity {
 
         operator object_t&() {
             return this->as_object();
+        }
+
+    protected:
+        json(data_t&& data) :
+          data(data) {
         }
 
     public:

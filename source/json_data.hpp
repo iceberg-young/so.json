@@ -2,7 +2,7 @@
 #define INCLUDE_SINGULARITY_JSON_DATA_ONCE_FLAG
 
 #include <typeinfo>
-#include "../include/json.hpp"
+#include "json.hpp"
 
 namespace singularity {
     class json_data :
@@ -11,7 +11,7 @@ namespace singularity {
     public:
         static void escape(const std::string& source, std::string& target);
 
-        static std::string un_escape(std::string::const_iterator& i);
+        static std::string un_escape(json::literal_t& iterator);
 
         static json::data_t factory(json::content_type type);
 

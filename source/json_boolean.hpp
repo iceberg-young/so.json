@@ -30,6 +30,9 @@ namespace singularity {
         void stringify(std::string& target) const override {
             target += "false";
         }
+
+    public:
+        static json::data_t solo;
     };
 
     class json_true :
@@ -58,6 +61,9 @@ namespace singularity {
         void stringify(std::string& target) const override {
             target += "true";
         }
+
+    public:
+        static json::data_t solo;
     };
 }
 
