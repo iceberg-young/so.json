@@ -23,26 +23,21 @@ namespace singularity {
             value_separator = ',',
         };
 
-        using iterator_t = std::string::const_iterator;
-
     public:
-        json_decode(iterator_t& i) :
-          begin(i),
-          iterator(i) {
+        json_decode(json::literal_t& begin) :
+          begin(begin),
+          iterator(begin) {
         }
 
     public:
-        json run() {
-            --this->iterator;
-            return this->cascade(this->next());
-        }
+        json run();
 
     protected:
         // Cascade create node.
-        json cascade(token t);
+        json::data_t cascade(token t);
 
         // Create a node start from the iterator.
-        json create(token t);
+        json::data_t factory(token t);
 
         // Create children for an array node.
         void fill_children(json::array_t& array);
@@ -50,10 +45,13 @@ namespace singularity {
         // Create children for an object node.
         void fill_children(json::object_t& object);
 
+    protected:
         // Move iterator over the expected literals.
         void pass_literals(const std::string& expected);
 
         double parse_number();
+
+        std::string parse_string();
 
     protected:
         // Iterator information for debug.
@@ -63,12 +61,12 @@ namespace singularity {
         token next();
 
         // Check value separator take post.
-        bool separated(token t, bool& s);
+        bool separator(token t, bool& s);
 
     private:
-        const iterator_t begin;
+        const json::literal_t begin;
 
-        iterator_t& iterator;
+        json::literal_t& iterator;
     };
 }
 

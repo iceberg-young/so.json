@@ -48,43 +48,6 @@ namespace singularity {
         }
     }
 
-    std::string json_data::un_escape(json::literal_t& i) {
-        std::string target;
-        while (*++i != '"') {
-            char c = *i;
-            if (c == '\\') {
-                switch (c = *++i) {
-                    case 'b':
-                        c = '\b';
-                        break;
-
-                    case 'f':
-                        c = '\f';
-                        break;
-
-                    case 'n':
-                        c = '\n';
-                        break;
-
-                    case 'r':
-                        c = '\r';
-                        break;
-
-                    case 't':
-                        c = '\t';
-                        break;
-
-                    case 'u':
-                        i += 4;
-                        // TODO
-                        continue;
-                }
-            }
-            target += c;
-        }
-        return target;
-    }
-
     json::data_t json_data::factory(json::content_type type) {
         switch (type) {
             case json::content_type::null:

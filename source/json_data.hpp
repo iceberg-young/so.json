@@ -11,8 +11,6 @@ namespace singularity {
     public:
         static void escape(const std::string& source, std::string& target);
 
-        static std::string un_escape(json::literal_t& iterator);
-
         static json::data_t factory(json::content_type type);
 
     public:

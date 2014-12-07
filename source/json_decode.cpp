@@ -1,47 +1,56 @@
-#include <list>
-#include "json_data.hpp"
+#include "json_null.hpp"
+#include "json_boolean.hpp"
+#include "json_number.hpp"
+#include "json_string.hpp"
+#include "json_array.hpp"
+#include "json_object.hpp"
 #include "json_decode.hpp"
 
 namespace singularity {
-    json json_decode::cascade(token t) {
-        json node = this->create(t);
-        switch (node.type()) {
+    json json_decode::run() {
+        --this->iterator;
+        return json{this->cascade(this->next())};
+    };
+
+    json::data_t json_decode::cascade(token t) {
+        auto node = this->factory(t);
+        switch (node->type) {
             case json::content_type::array:
-                this->fill_children(node.as_array());
+                this->fill_children(node->to_array());
                 break;
 
             case json::content_type::object:
-                this->fill_children(node.as_object());
+                this->fill_children(node->to_object());
                 break;
         }
         return node;
     }
 
-    json json_decode::create(token t) {
+    json::data_t json_decode::factory(token t) {
         switch (t) {
             case token::null:
                 this->pass_literals("ull");
-                return json{};
+                return json_null::solo;
 
             case token::boolean_false:
                 this->pass_literals("alse");
-                return json{false};
+                return json_false::solo;
 
             case token::boolean_true:
                 this->pass_literals("rue");
-                return json{true};
+                return json_true::solo;
 
             case token::number:
-                return json{this->parse_number()};
+                return json::data_t{new json_number{this->parse_number()}};
 
             case token::string:
-                return json{json_data::un_escape(this->iterator)};
+                return json::data_t{new json_string{this->parse_string()}};
 
             case token::array_begin:
-                return json{json::content_type::array};
+                return json::data_t{new json_array};
 
             case token::object_begin:
-                return json{json::content_type::object};
+                return json::data_t{new json_object};
 
             default: {
                 throw json_decode_error{this->dump() + " invalid node type."};
@@ -53,34 +62,30 @@ namespace singularity {
         token t;
         bool s = true;
         while (token::array_end != (t = this->next())) {
-            if (this->separated(t, s)) {
-                array.emplace_back(this->cascade(t));
-            }
+            if (this->separator(t, s)) {continue;}
+            array.emplace_back(this->cascade(t));
         }
     }
 
     void json_decode::fill_children(json::object_t& object) {
-        token tn;
+        token t;
         bool s = true;
-        while (token::object_end != (tn = this->next())) {
-            if (separated(tn, s)) {
-                // name
-                if (tn != token::string) {
-                    throw json_decode_error{this->dump() + " name (string) is expected."};
-                }
-                auto name = json_data::un_escape(this->iterator);
+        while (token::object_end != (t = this->next())) {
+            if (this->separator(t, s)) {continue;}
 
-                // separator (:)
-                auto ts = this->next();
-                if (ts != token::name_separator) {
-                    throw json_decode_error{this->dump() + " name separator (:) is expected."};
-                }
-
-                // value
-                auto tv = this->next();
-                auto value = this->cascade(tv);
-                object.emplace(std::make_pair(name, std::move(value)));
+            // name
+            if (t != token::string) {
+                throw json_decode_error{this->dump() + " name (string) is expected."};
             }
+            auto name = this->parse_string();
+
+            // separator (:)
+            if (this->next() != token::name_separator) {
+                throw json_decode_error{this->dump() + " name separator (:) is expected."};
+            }
+
+            // value
+            object.emplace(std::move(name), this->cascade(this->next()));
         }
     }
 
@@ -93,7 +98,7 @@ namespace singularity {
     }
 
     double json_decode::parse_number() {
-        iterator_t head = this->iterator;
+        json::literal_t head = this->iterator;
         // sign
         if (*this->iterator == '-') {++this->iterator;}
         // integer
@@ -111,10 +116,47 @@ namespace singularity {
         return std::stod(std::string{head, this->iterator--});
     }
 
+    std::string json_decode::parse_string() {
+        std::string target;
+        while (*++iterator != '"') {
+            char c = *iterator;
+            if (c == '\\') {
+                switch (c = *++iterator) {
+                    case 'b':
+                        c = '\b';
+                        break;
+
+                    case 'f':
+                        c = '\f';
+                        break;
+
+                    case 'n':
+                        c = '\n';
+                        break;
+
+                    case 'r':
+                        c = '\r';
+                        break;
+
+                    case 't':
+                        c = '\t';
+                        break;
+
+                    case 'u':
+                        iterator += 4;
+                        // TODO
+                        continue;
+                }
+            }
+            target += c;
+        }
+        return target;
+    }
+
     std::string json_decode::dump() {
         auto c = std::to_string(int(*this->iterator));
         auto d = std::to_string(this->iterator - this->begin);
-        return '[' + c + ':' + '@' + d + ']';
+        return '[' + c + '@' + d + ']';
     }
 
     json_decode::token json_decode::next() {
@@ -143,10 +185,10 @@ namespace singularity {
         }
     }
 
-    bool json_decode::separated(token t, bool& s) {
+    bool json_decode::separator(token t, bool& s) {
         if (!s and t != token::value_separator) {
             throw json_decode_error{this->dump() + " value separator (,) is expected."};
         }
-        return !(s = !s);
+        return s = !s;
     }
 }
