@@ -10,17 +10,8 @@ namespace singularity {
       data(other.data->clone()) {
     }
 
-    json::json(json&& other) :
-      data(std::move(other.data)) {
-    }
-
     json& json::operator=(const json& other) {
         this->data = other.data->clone();
-        return *this;
-    }
-
-    json& json::operator=(json&& other) {
-        this->data.swap(other.data);
         return *this;
     }
 

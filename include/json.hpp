@@ -43,8 +43,14 @@ namespace singularity {
         // Clone from the other node.
         json(const json& other);
 
-        // Steal from the other node.
-        json(json&& other);
+    public: // Steal from the other node.
+        json(json&& other) :
+          data(std::move(other.data)) {
+        }
+
+        json(data_t&& data) :
+          data(std::move(data)) {
+        }
 
     public: // Initialize by value.
         json(/*null*/);
@@ -76,7 +82,10 @@ namespace singularity {
     public:
         json& operator=(const json& other);
 
-        json& operator=(json&& other);
+        json& operator=(json&& other) {
+            this->data.swap(other.data);
+            return *this;
+        }
 
     public:
         // Initialize from a JSON text, may throw json_decode_error.
@@ -207,11 +216,6 @@ namespace singularity {
 
         operator object_t&() {
             return this->as_object();
-        }
-
-    protected:
-        json(data_t&& data) :
-          data(data) {
         }
 
     public:
