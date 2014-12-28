@@ -1,3 +1,4 @@
+#include <cmath>
 #include "json_null.hpp"
 #include "json_boolean.hpp"
 #include "json_number.hpp"
@@ -59,6 +60,7 @@ namespace singularity {
     }
 
     void json_decode::fill_children(json::array_t& array) {
+        array.reserve(8);
         token t;
         bool s = true;
         while (token::array_end != (t = this->next())) {
@@ -97,31 +99,59 @@ namespace singularity {
         }
     }
 
+    constexpr int DECIMAL_SCALE = 10;
+
     double json_decode::parse_number() {
-        json::literal_t head = this->iterator;
         // sign
-        if (*this->iterator == '-') {++this->iterator;}
+        int base_sign = this->parse_sign();
         // integer
-        while (std::isdigit(*this->iterator)) {++this->iterator;}
+        double base = 0;
+        while (std::isdigit(*this->iterator)) {
+            base = base * DECIMAL_SCALE + (*this->iterator++ - '0');
+        }
         // fraction
+        int frac = 0;
         if (*this->iterator == '.') {
-            while (std::isdigit(*++this->iterator)) {}
+            while (std::isdigit(*++this->iterator)) {
+                base = base * DECIMAL_SCALE + (*this->iterator - '0');
+                ++frac;
+            }
         }
+        base *= base_sign;
         // exponent
+        int expo = 0;
         if (*this->iterator == 'e') {
-            char c = *++this->iterator;
-            if (c == '-' or c == '+') {++this->iterator;}
-            while (std::isdigit(*this->iterator)) {++this->iterator;}
+            ++this->iterator;
+            int expo_sign = this->parse_sign();
+            while (std::isdigit(*this->iterator)) {
+                expo = expo * DECIMAL_SCALE + (*this->iterator++ - '0');
+            }
+            expo *= expo_sign;
         }
-        return std::stod(std::string{head, this->iterator--});
+        --this->iterator;
+        return base * std::pow(DECIMAL_SCALE, expo - frac);
+    }
+
+    int json_decode::parse_sign() {
+        switch (*this->iterator) {
+            case '-':
+                ++this->iterator;
+                return -1;
+
+            case '+':
+                ++this->iterator;
+            default:
+                return +1;
+        }
     }
 
     std::string json_decode::parse_string() {
         std::string target;
-        while (*++iterator != '"') {
-            char c = *iterator;
+        target.reserve(32);
+        while (*++this->iterator != '"') {
+            char c = *this->iterator;
             if (c == '\\') {
-                switch (c = *++iterator) {
+                switch (c = *++this->iterator) {
                     case 'b':
                         c = '\b';
                         break;
@@ -143,7 +173,7 @@ namespace singularity {
                         break;
 
                     case 'u':
-                        iterator += 4;
+                        this->iterator += 4;
                         // TODO
                         continue;
                 }

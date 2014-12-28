@@ -51,6 +51,8 @@ namespace singularity {
 
         double parse_number();
 
+        int parse_sign();
+
         std::string parse_string();
 
     protected:
