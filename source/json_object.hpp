@@ -17,7 +17,7 @@ namespace singularity {
           value(value) {
         }
 
-        json_object(json::object_t&& value) :
+        json_object(json::object_t&& value) noexcept :
           json_data(json::content_type::object),
           value(std::move(value)) {
         }

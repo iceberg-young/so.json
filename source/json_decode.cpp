@@ -60,7 +60,6 @@ namespace singularity {
     }
 
     void json_decode::fill_children(json::array_t& array) {
-        array.reserve(8);
         token t;
         bool s = true;
         while (token::array_end != (t = this->next())) {

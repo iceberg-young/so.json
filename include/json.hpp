@@ -42,11 +42,11 @@ namespace singularity {
         json(const json& other);
 
     public: // Steal from the other node.
-        json(json&& other) :
+        json(json&& other) noexcept :
           data(std::move(other.data)) {
         }
 
-        json(data_t&& data) :
+        json(data_t&& data) noexcept :
           data(std::move(data)) {
         }
 

@@ -17,7 +17,7 @@ namespace singularity {
           value(value) {
         }
 
-        json_string(std::string&& value) :
+        json_string(std::string&& value) noexcept :
           json_data(json::content_type::string),
           value(std::move(value)) {
         }
