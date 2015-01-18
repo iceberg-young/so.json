@@ -49,7 +49,7 @@ namespace singularity {
                 return (*this)(std::to_string(index));
 
             case content_type::null:
-                this->be(content_type::array);
+                this->be_array(array_t(index + 1));
 
             default:
                 auto& array = this->data->to_array();

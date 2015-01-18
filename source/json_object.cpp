@@ -49,7 +49,7 @@ namespace singularity {
                 return (*this)(std::stoul(key));
 
             case content_type::null:
-                this->be(content_type::object);
+                this->be_object(object_t{});
 
             default:
                 return this->data->to_object()[key];
