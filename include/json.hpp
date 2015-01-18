@@ -11,8 +11,6 @@ namespace singularity {
     // Representation of RFC-7159 specified object.
     class json
     {
-        friend class json_decode;
-
     public:
         enum class content_type
         {
@@ -53,7 +51,7 @@ namespace singularity {
         }
 
     public: // Initialize by value.
-        json(/*null*/);
+        json(std::nullptr_t value = nullptr);
 
         json(bool value);
 
@@ -216,6 +214,24 @@ namespace singularity {
 
         operator object_t&() {
             return this->as_object();
+        }
+
+    public: // Throw std::out_of_range if not exist.
+        json& operator[](size_t index);
+
+        json& operator[](const std::string& key);
+
+        json& operator[](const char* key) {
+            return (*this)[std::string{key}];
+        }
+
+    public: // Create if not exist.
+        json& operator()(size_t index);
+
+        json& operator()(const std::string& key);
+
+        json& operator()(const char* key) {
+            return (*this)(std::string{key});
         }
 
     public:

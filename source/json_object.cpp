@@ -37,6 +37,23 @@ namespace singularity {
         return this->data->to_object();
     }
 
+    json& json::operator[](const std::string& key) {
+        return this->data->to_object().at(key);
+    }
+
+    json& json::operator()(const std::string& key) {
+        if (this->data->type == content_type::null) {
+            this->be(content_type::object);
+        }
+        auto& object = this->data->to_object();
+        try {
+            return object.at(key);
+        }
+        catch (std::out_of_range) {
+            return object.emplace(std::make_pair(key, nullptr)).first->second;
+        }
+    }
+
     void json_object::stringify(std::string& target) const {
         target += '{';
         if (!this->value.empty()) {

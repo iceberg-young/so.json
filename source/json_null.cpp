@@ -3,7 +3,7 @@
 namespace singularity {
     json::data_t json_null::solo{new json_null};
 
-    json::json() :
+    json::json(std::nullptr_t value) :
       data(json_null::solo) {
     }
 
