@@ -166,7 +166,7 @@ namespace singularity {
             return this->be_object(std::move(value));
         }
 
-    public: // Get content value, may throw std::bad_cast if type mismatch.
+    public: // Get content value.
         bool to_boolean() const;
 
         double to_number() const;

@@ -1,6 +1,7 @@
 #ifndef INCLUDE_SINGULARITY_JSON_DATA_ONCE_FLAG
 #define INCLUDE_SINGULARITY_JSON_DATA_ONCE_FLAG
 
+#include <limits>
 #include <typeinfo>
 #include "json.hpp"
 
@@ -55,24 +56,20 @@ namespace singularity {
         }
 
     public:
-        virtual bool to_boolean() const {
-            throw std::bad_cast{};
-        }
+        virtual bool to_boolean() const = 0;
+
+        virtual std::string to_string() const = 0;
 
         virtual double to_number() const {
-            throw std::bad_cast{};
+            return std::numeric_limits<double>::quiet_NaN();
         }
 
-        virtual std::string to_string() const {
-            throw std::bad_cast{};
+        virtual json::array_t to_array() {
+            return json::array_t{json{shared_from_this()}};
         }
 
-        virtual json::array_t& to_array() {
-            throw std::bad_cast{};
-        }
-
-        virtual json::object_t& to_object() {
-            throw std::bad_cast{};
+        virtual json::object_t to_object() {
+            return json::object_t{std::make_pair(this->to_string(), json{shared_from_this()})};
         }
 
     public:

@@ -35,7 +35,7 @@ namespace singularity {
             this->value.swap(value);
         }
 
-        json::array_t& to_array() override {
+        json::array_t to_array() override {
             return this->value;
         }
 
@@ -48,6 +48,11 @@ namespace singularity {
 
     public:
         void stringify(std::string& target) const override;
+
+    public:
+        static json::array_t& cast(const json::data_t& data) {
+            return dynamic_cast<json_array&>(*data).value;
+        }
 
     private:
         json::array_t value;

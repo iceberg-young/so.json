@@ -34,13 +34,13 @@ namespace singularity {
     }
 
     json::array_t& json::as_array() {
-        return this->data->to_array();
+        return json_array::cast(this->data);
     }
 
     json& json::operator[](size_t index) {
         return this->data->type == content_type::object
           ? (*this)[std::to_string(index)]
-          : this->data->to_array().at(index);
+          : json_array::cast(this->data).at(index);
     }
 
     json& json::operator()(size_t index) {
@@ -52,7 +52,7 @@ namespace singularity {
                 this->be_array(array_t(index + 1));
 
             default:
-                auto& array = this->data->to_array();
+                auto& array = json_array::cast(this->data);
                 if (index >= array.size()) {
                     array.resize(index + 1);
                 }

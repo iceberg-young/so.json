@@ -34,13 +34,13 @@ namespace singularity {
     }
 
     json::object_t& json::as_object() {
-        return this->data->to_object();
+        return json_object::cast(this->data);
     }
 
     json& json::operator[](const std::string& key) {
         return this->data->type == content_type::array
           ? (*this)[std::stoul(key)]
-          : this->data->to_object().at(key);
+          : json_object::cast(this->data).at(key);
     }
 
     json& json::operator()(const std::string& key) {
@@ -52,7 +52,7 @@ namespace singularity {
                 this->be_object(object_t{});
 
             default:
-                return this->data->to_object()[key];
+                return json_object::cast(this->data)[key];
         }
     }
 
