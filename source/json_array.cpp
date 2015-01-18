@@ -38,20 +38,25 @@ namespace singularity {
     }
 
     json& json::operator[](size_t index) {
-        return this->data->to_array().at(index);
+        return this->data->type == content_type::object
+          ? (*this)[std::to_string(index)]
+          : this->data->to_array().at(index);
     }
 
     json& json::operator()(size_t index) {
-        if (this->data->type == content_type::null) {
-            this->be(content_type::array);
-        }
-        auto& array = this->data->to_array();
-        try {
-            return array.at(index);
-        }
-        catch (std::out_of_range) {
-            array.resize(index); // GCC bug?
-            return *array.emplace(array.begin() + index);
+        switch (this->data->type) {
+            case content_type::object:
+                return (*this)(std::to_string(index));
+
+            case content_type::null:
+                this->be(content_type::array);
+
+            default:
+                auto& array = this->data->to_array();
+                if (index >= array.size()) {
+                    array.resize(index + 1);
+                }
+                return array[index];
         }
     }
 

@@ -38,19 +38,21 @@ namespace singularity {
     }
 
     json& json::operator[](const std::string& key) {
-        return this->data->to_object().at(key);
+        return this->data->type == content_type::array
+          ? (*this)[std::stoul(key)]
+          : this->data->to_object().at(key);
     }
 
     json& json::operator()(const std::string& key) {
-        if (this->data->type == content_type::null) {
-            this->be(content_type::object);
-        }
-        auto& object = this->data->to_object();
-        try {
-            return object.at(key);
-        }
-        catch (std::out_of_range) {
-            return object.emplace(std::make_pair(key, nullptr)).first->second;
+        switch (this->data->type) {
+            case content_type::array:
+                return (*this)(std::stoul(key));
+
+            case content_type::null:
+                this->be(content_type::object);
+
+            default:
+                return this->data->to_object()[key];
         }
     }
 
