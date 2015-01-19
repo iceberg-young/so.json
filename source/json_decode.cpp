@@ -17,11 +17,11 @@ namespace singularity {
         auto node = this->factory(t);
         switch (node->type) {
             case json::content_type::array:
-                this->fill_children(json_array::cast(node));
+                this->fill_children(json_array::get(node));
                 break;
 
             case json::content_type::object:
-                this->fill_children(json_object::cast(node));
+                this->fill_children(json_object::get(node));
                 break;
         }
         return node;

@@ -10,7 +10,7 @@ namespace singularity {
             this->data = data_t{new json_number{value}};
         }
         else {
-            this->data->be_number(value);
+            json_number::set(this->data, value);
         }
         return *this;
     }

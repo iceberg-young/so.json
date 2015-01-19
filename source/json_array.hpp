@@ -27,14 +27,19 @@ namespace singularity {
         }
 
     public:
-        void be_array(const json::array_t& value) override {
-            this->value = value;
+        static json::array_t& get(const json::data_t& data) {
+            return dynamic_cast<json_array&>(*data).value;
         }
 
-        void be_array(json::array_t&& value) override {
-            this->value.swap(value);
+        static void set(const json::data_t& data, const json::array_t& value) {
+            get(data) = value;
         }
 
+        static void set(const json::data_t& data, json::array_t&& value) {
+            get(data).swap(value);
+        }
+
+    public:
         json::array_t to_array() override {
             return this->value;
         }
@@ -50,11 +55,6 @@ namespace singularity {
 
     public:
         void stringify(std::string& target) const override;
-
-    public:
-        static json::array_t& cast(const json::data_t& data) {
-            return dynamic_cast<json_array&>(*data).value;
-        }
 
     private:
         json::array_t value;

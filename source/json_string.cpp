@@ -14,7 +14,7 @@ namespace singularity {
             this->data = data_t{new json_string{value}};
         }
         else {
-            this->data->be_string(value);
+            json_string::set(this->data, value);
         }
         return *this;
     }
@@ -24,7 +24,7 @@ namespace singularity {
             this->data = data_t{new json_string{std::move(value)}};
         }
         else {
-            this->data->be_string(std::move(value));
+            json_string::set(this->data, std::move(value));
         }
         return *this;
     }

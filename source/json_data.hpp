@@ -27,35 +27,6 @@ namespace singularity {
         }
 
     public:
-        virtual void be_number(double value) {
-            throw std::bad_cast{};
-        }
-
-        virtual void be_string(const std::string& value) {
-            throw std::bad_cast{};
-        }
-
-        virtual void be_string(std::string&& value) {
-            throw std::bad_cast{};
-        }
-
-        virtual void be_array(const json::array_t& value) {
-            throw std::bad_cast{};
-        }
-
-        virtual void be_array(json::array_t&& value) {
-            throw std::bad_cast{};
-        }
-
-        virtual void be_object(const json::object_t& value) {
-            throw std::bad_cast{};
-        }
-
-        virtual void be_object(json::object_t&& value) {
-            throw std::bad_cast{};
-        }
-
-    public:
         virtual bool to_boolean() const = 0;
 
         virtual std::string to_string() const = 0;

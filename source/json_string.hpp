@@ -27,14 +27,19 @@ namespace singularity {
         }
 
     public:
-        void be_string(const std::string& value) override {
-            this->value = value;
+        static std::string& get(const json::data_t& data) {
+            return dynamic_cast<json_string&>(*data).value;
         }
 
-        void be_string(std::string&& value) override {
-            this->value.swap(value);
+        static void set(const json::data_t& data, const std::string& value) {
+            get(data) = value;
         }
 
+        static void set(const json::data_t& data, std::string&& value) {
+            get(data).swap(value);
+        }
+
+    public:
         std::string to_string() const override {
             return this->value;
         }

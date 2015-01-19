@@ -22,10 +22,11 @@ namespace singularity {
         }
 
     public:
-        void be_number(double value) override {
-            this->value = value;
+        static void set(const json::data_t& data, double value) {
+            dynamic_cast<json_number&>(*data).value = value;
         }
 
+    public:
         double to_number() const override {
             return this->value;
         }

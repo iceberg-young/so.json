@@ -14,7 +14,7 @@ namespace singularity {
             this->data = data_t{new json_object{value}};
         }
         else {
-            this->data->be_object(value);
+            json_object::set(this->data, value);
         }
         return *this;
     }
@@ -24,7 +24,7 @@ namespace singularity {
             this->data = data_t{new json_object{std::move(value)}};
         }
         else {
-            this->data->be_object(std::move(value));
+            json_object::set(this->data, std::move(value));
         }
         return *this;
     }
@@ -34,13 +34,13 @@ namespace singularity {
     }
 
     json::object_t& json::as_object() {
-        return json_object::cast(this->data);
+        return json_object::get(this->data);
     }
 
     json& json::operator[](const std::string& key) {
         return this->data->type == content_type::array
           ? (*this)[std::stoul(key)]
-          : json_object::cast(this->data).at(key);
+          : json_object::get(this->data).at(key);
     }
 
     json& json::operator()(const std::string& key) {
@@ -52,7 +52,7 @@ namespace singularity {
                 this->be_object(object_t{});
 
             default:
-                return json_object::cast(this->data)[key];
+                return json_object::get(this->data)[key];
         }
     }
 

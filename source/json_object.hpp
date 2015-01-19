@@ -27,14 +27,19 @@ namespace singularity {
         }
 
     public:
-        void be_object(const json::object_t& value) override {
-            this->value = value;
+        static json::object_t& get(const json::data_t& data) {
+            return dynamic_cast<json_object&>(*data).value;
         }
 
-        void be_object(json::object_t&& value) override {
-            this->value.swap(value);
+        static void set(const json::data_t& data, const json::object_t& value) {
+            get(data) = value;
         }
 
+        static void set(const json::data_t& data, json::object_t&& value) {
+            get(data).swap(value);
+        }
+
+    public:
         json::object_t to_object() override {
             return this->value;
         }
@@ -52,11 +57,6 @@ namespace singularity {
 
     public:
         void stringify(std::string& target) const override;
-
-    public:
-        static json::object_t& cast(const json::data_t& data) {
-            return dynamic_cast<json_object&>(*data).value;
-        }
 
     protected:
         static void append_pair(const std::string& name, const json& value, std::string& target);
