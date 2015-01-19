@@ -65,11 +65,11 @@ namespace singularity {
         }
 
         virtual json::array_t to_array() {
-            return json::array_t{json{shared_from_this()}};
+            return json::array_t{json{this->clone()}};
         }
 
         virtual json::object_t to_object() {
-            return json::object_t{std::make_pair(this->to_string(), json{shared_from_this()})};
+            return json::object_t{std::make_pair(this->to_string(), json{this->clone()})};
         }
 
     public:

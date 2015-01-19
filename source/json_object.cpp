@@ -69,6 +69,15 @@ namespace singularity {
         target += '}';
     }
 
+    json::array_t json_object::to_array() {
+        json::array_t a;
+        a.reserve(this->value.size());
+        for (auto& v : this->value) {
+            a.push_back(v.second);
+        }
+        return a;
+    }
+
     void json_object::append_pair(const std::string& name, const json& value, std::string& target) {
         target += '"';
         escape(name, target);

@@ -72,6 +72,15 @@ namespace singularity {
         return s;
     }
 
+    json::object_t json_array::to_object() {
+        json::object_t o;
+        int i = 0;
+        for (auto& v : this->value) {
+            o[std::to_string(i++)] = v;
+        }
+        return o;
+    }
+
     void json_array::stringify(std::string& target) const {
         target += '[';
         if (!this->value.empty()) {

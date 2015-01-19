@@ -46,6 +46,8 @@ namespace singularity {
 
         std::string to_string() const override;
 
+        json::object_t to_object() override;
+
     public:
         void stringify(std::string& target) const override;
 

@@ -48,6 +48,8 @@ namespace singularity {
             return "[object Object]";
         }
 
+        json::array_t to_array() override;
+
     public:
         void stringify(std::string& target) const override;
 
