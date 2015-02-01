@@ -177,7 +177,6 @@ namespace singularity {
 
         object_t to_object() const;
 
-    public:
         array_t& as_array();
 
         object_t& as_object();
@@ -207,7 +206,6 @@ namespace singularity {
             return this->to_object();
         }
 
-    public:
         operator array_t&() {
             return this->as_array();
         }
@@ -233,6 +231,9 @@ namespace singularity {
         json& operator()(const char* key) {
             return (*this)(std::string{key});
         }
+
+    public:
+        bool operator==(const json& other) const;
 
     public:
         // The implementation details. Wrapped to minimise interface.
