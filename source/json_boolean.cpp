@@ -1,6 +1,6 @@
 #include "json_boolean.hpp"
 
-namespace singularity {
+namespace so {
     json::data_t json_true::solo{new json_true};
 
     json::data_t json_false::solo{new json_false};

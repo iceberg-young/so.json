@@ -1,9 +1,9 @@
-#ifndef INCLUDE_SINGULARITY_JSON_LEXER_ONCE_FLAG
-#define INCLUDE_SINGULARITY_JSON_LEXER_ONCE_FLAG
+#ifndef INCLUDE_SO_JSON_LEXER_ONCE_FLAG
+#define INCLUDE_SO_JSON_LEXER_ONCE_FLAG
 
 #include "json.hpp"
 
-namespace singularity {
+namespace so {
     class json_decode
     {
     public:
@@ -72,4 +72,4 @@ namespace singularity {
     };
 }
 
-#endif//INCLUDE_SINGULARITY_JSON_LEXER_ONCE_FLAG
+#endif//INCLUDE_SO_JSON_LEXER_ONCE_FLAG

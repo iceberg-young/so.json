@@ -6,5 +6,5 @@ set(SOURCE_FILES main.cpp)
 
 add_subdirectory(source)
 add_executable(json ${SOURCE_FILES})
-add_dependencies(json singularity.json)
-target_link_libraries(json singularity.json)
+add_dependencies(json so.json)
+target_link_libraries(json so.json)

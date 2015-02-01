@@ -1,6 +1,6 @@
 #include "json_object.hpp"
 
-namespace singularity {
+namespace so {
     json::json(const object_t& value) :
       data(new json_object{value}) {
     }

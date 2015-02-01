@@ -5,7 +5,7 @@
 #include "json_array.hpp"
 #include "json_object.hpp"
 
-namespace singularity {
+namespace so {
     json& json::be(content_type type) {
         if (type == this->data->type) return *this;
 

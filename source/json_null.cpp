@@ -1,6 +1,6 @@
 #include "json_null.hpp"
 
-namespace singularity {
+namespace so {
     json::data_t json_null::solo{new json_null};
 
     json::json(std::nullptr_t value) :

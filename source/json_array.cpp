@@ -1,6 +1,6 @@
 #include "json_array.hpp"
 
-namespace singularity {
+namespace so {
     json::json(const array_t& value) :
       data(new json_array{value}) {
     }

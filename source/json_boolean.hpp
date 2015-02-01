@@ -1,9 +1,9 @@
-#ifndef INCLUDE_SINGULARITY_JSON_BOOLEAN_ONCE_FLAG
-#define INCLUDE_SINGULARITY_JSON_BOOLEAN_ONCE_FLAG
+#ifndef INCLUDE_SO_JSON_BOOLEAN_ONCE_FLAG
+#define INCLUDE_SO_JSON_BOOLEAN_ONCE_FLAG
 
 #include "json_data.hpp"
 
-namespace singularity {
+namespace so {
     class json_false :
       public json_data
     {
@@ -67,4 +67,4 @@ namespace singularity {
     };
 }
 
-#endif//INCLUDE_SINGULARITY_JSON_BOOLEAN_ONCE_FLAG
+#endif//INCLUDE_SO_JSON_BOOLEAN_ONCE_FLAG

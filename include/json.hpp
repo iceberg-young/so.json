@@ -1,5 +1,5 @@
-#ifndef INCLUDE_SINGULARITY_JSON_ONCE_FLAG
-#define INCLUDE_SINGULARITY_JSON_ONCE_FLAG
+#ifndef INCLUDE_SO_JSON_ONCE_FLAG
+#define INCLUDE_SO_JSON_ONCE_FLAG
 
 #include <map>
 #include <memory>
@@ -7,7 +7,7 @@
 #include <vector>
 #include <stdexcept>
 
-namespace singularity {
+namespace so {
     // Representation of RFC-7159 specified object.
     class json
     {
@@ -250,4 +250,4 @@ namespace singularity {
     };
 }
 
-#endif//INCLUDE_SINGULARITY_JSON_ONCE_FLAG
+#endif//INCLUDE_SO_JSON_ONCE_FLAG

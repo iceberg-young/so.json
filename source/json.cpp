@@ -1,7 +1,7 @@
 #include "json_data.hpp"
 #include "json_decode.hpp"
 
-namespace singularity {
+namespace so {
     json::json(content_type type) :
       data(json_data::factory(type)) {
     }

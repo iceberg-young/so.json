@@ -1,6 +1,6 @@
 #include "json_number.hpp"
 
-namespace singularity {
+namespace so {
     json::json(double value) :
       data(new json_number{value}) {
     }

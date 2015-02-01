@@ -7,7 +7,7 @@
 #include "json_object.hpp"
 #include "json_decode.hpp"
 
-namespace singularity {
+namespace so {
     json json_decode::run() {
         --this->iterator;
         return json{this->cascade(this->next())};

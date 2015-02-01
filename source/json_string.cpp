@@ -1,6 +1,6 @@
 #include "json_string.hpp"
 
-namespace singularity {
+namespace so {
     json::json(const std::string& value) :
       data(new json_string{value}) {
     }

@@ -1,11 +1,10 @@
-#ifndef INCLUDE_SINGULARITY_JSON_DATA_ONCE_FLAG
-#define INCLUDE_SINGULARITY_JSON_DATA_ONCE_FLAG
+#ifndef INCLUDE_SO_JSON_DATA_ONCE_FLAG
+#define INCLUDE_SO_JSON_DATA_ONCE_FLAG
 
 #include <limits>
-#include <typeinfo>
 #include "json.hpp"
 
-namespace singularity {
+namespace so {
     class json_data :
       public std::enable_shared_from_this<json_data>
     {
@@ -53,4 +52,4 @@ namespace singularity {
     };
 }
 
-#endif//INCLUDE_SINGULARITY_JSON_DATA_ONCE_FLAG
+#endif//INCLUDE_SO_JSON_DATA_ONCE_FLAG

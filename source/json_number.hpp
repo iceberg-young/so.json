@@ -1,9 +1,9 @@
-#ifndef INCLUDE_SINGULARITY_JSON_NUMBER_ONCE_FLAG
-#define INCLUDE_SINGULARITY_JSON_NUMBER_ONCE_FLAG
+#ifndef INCLUDE_SO_JSON_NUMBER_ONCE_FLAG
+#define INCLUDE_SO_JSON_NUMBER_ONCE_FLAG
 
 #include "json_data.hpp"
 
-namespace singularity {
+namespace so {
     class json_number :
       public json_data
     {
@@ -46,4 +46,4 @@ namespace singularity {
     };
 }
 
-#endif//INCLUDE_SINGULARITY_JSON_NUMBER_ONCE_FLAG
+#endif//INCLUDE_SO_JSON_NUMBER_ONCE_FLAG
