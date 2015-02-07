@@ -15,5 +15,6 @@ set(SOURCE_FILES
     json_decode.cpp
 )
 
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 include_directories(../include)
-add_library(so.json STATIC ${SOURCE_FILES})
+include(Dependencies.cmake)

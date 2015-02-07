@@ -6,6 +6,7 @@
 #include "json_array.hpp"
 #include "json_object.hpp"
 #include "json_decode.hpp"
+#include "text/number.hpp"
 
 namespace so {
     json json_decode::run() {
@@ -43,7 +44,7 @@ namespace so {
                 return json_true::solo;
             }
             case token::number: {
-                return json::data_t{new json_number{this->parse_number()}};
+                return json::data_t{new json_number{text::dec(this->iterator)}};
             }
             case token::string: {
                 return json::data_t{new json_string{this->parse_string()}};
@@ -96,52 +97,6 @@ namespace so {
             if (c != *++this->iterator) {
                 throw json_decode_error{this->dump() + " expected: " + c};
             }
-        }
-    }
-
-    constexpr int DECIMAL_SCALE = 10;
-
-    double json_decode::parse_number() {
-        // sign
-        int base_sign = this->parse_sign();
-        // integer
-        double base = 0;
-        while (std::isdigit(*this->iterator)) {
-            base = base * DECIMAL_SCALE + (*this->iterator++ - '0');
-        }
-        // fraction
-        int frac = 0;
-        if (*this->iterator == '.') {
-            while (std::isdigit(*++this->iterator)) {
-                base = base * DECIMAL_SCALE + (*this->iterator - '0');
-                ++frac;
-            }
-        }
-        base *= base_sign;
-        // exponent
-        int expo = 0;
-        if (*this->iterator == 'e') {
-            ++this->iterator;
-            int expo_sign = this->parse_sign();
-            while (std::isdigit(*this->iterator)) {
-                expo = expo * DECIMAL_SCALE + (*this->iterator++ - '0');
-            }
-            expo *= expo_sign;
-        }
-        --this->iterator;
-        return base * std::pow(DECIMAL_SCALE, expo - frac);
-    }
-
-    int json_decode::parse_sign() {
-        switch (*this->iterator) {
-            case '-':
-                ++this->iterator;
-                return -1;
-
-            case '+':
-                ++this->iterator;
-            default:
-                return +1;
         }
     }
 

@@ -33,7 +33,7 @@ namespace so {
         json run();
 
     protected:
-        // Cascade create node.
+        // Create cascade node.
         json::data_t cascade(token t);
 
         // Create a node start from the iterator.
@@ -49,10 +49,6 @@ namespace so {
         // Move iterator over the expected literals.
         void pass_literals(const std::string& expected);
 
-        double parse_number();
-
-        int parse_sign();
-
         std::string parse_string();
 
     protected:
@@ -62,7 +58,7 @@ namespace so {
         // Guess type of next node.
         token next();
 
-        // Check value separator take post.
+        // Check if value-separator takes post.
         bool separator(token t, bool& s);
 
     private:
