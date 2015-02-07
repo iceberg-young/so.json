@@ -45,14 +45,15 @@ namespace so {
 
     json& json::operator()(const std::string& key) {
         switch (this->data->type) {
-            case content_type::array:
+            case content_type::array: {
                 return (*this)(std::stoul(key));
-
-            case content_type::null:
+            }
+            case content_type::null: {
                 this->be_object(object_t{});
-
-            default:
+            }
+            default: {
                 return json_object::get(this->data)[key];
+            }
         }
     }
 

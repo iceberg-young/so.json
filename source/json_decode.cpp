@@ -16,43 +16,44 @@ namespace so {
     json::data_t json_decode::cascade(token t) {
         auto node = this->factory(t);
         switch (node->type) {
-            case json::content_type::array:
+            case json::content_type::array: {
                 this->fill_children(json_array::get(node));
                 break;
-
-            case json::content_type::object:
+            }
+            case json::content_type::object: {
                 this->fill_children(json_object::get(node));
                 break;
+            }
         }
         return node;
     }
 
     json::data_t json_decode::factory(token t) {
         switch (t) {
-            case token::null:
+            case token::null: {
                 this->pass_literals("ull");
                 return json_null::solo;
-
-            case token::boolean_false:
+            }
+            case token::boolean_false: {
                 this->pass_literals("alse");
                 return json_false::solo;
-
-            case token::boolean_true:
+            }
+            case token::boolean_true: {
                 this->pass_literals("rue");
                 return json_true::solo;
-
-            case token::number:
+            }
+            case token::number: {
                 return json::data_t{new json_number{this->parse_number()}};
-
-            case token::string:
+            }
+            case token::string: {
                 return json::data_t{new json_string{this->parse_string()}};
-
-            case token::array_begin:
+            }
+            case token::array_begin: {
                 return json::data_t{new json_array};
-
-            case token::object_begin:
+            }
+            case token::object_begin: {
                 return json::data_t{new json_object};
-
+            }
             default: {
                 throw json_decode_error{this->dump() + " invalid node type."};
             }
@@ -146,35 +147,36 @@ namespace so {
 
     std::string json_decode::parse_string() {
         std::string target;
-        target.reserve(32);
+        target.reserve(32); //< HACK
         while (*++this->iterator != '"') {
             char c = *this->iterator;
             if (c == '\\') {
                 switch (c = *++this->iterator) {
-                    case 'b':
+                    case 'b': {
                         c = '\b';
                         break;
-
-                    case 'f':
+                    }
+                    case 'f': {
                         c = '\f';
                         break;
-
-                    case 'n':
+                    }
+                    case 'n': {
                         c = '\n';
                         break;
-
-                    case 'r':
+                    }
+                    case 'r': {
                         c = '\r';
                         break;
-
-                    case 't':
+                    }
+                    case 't': {
                         c = '\t';
                         break;
-
-                    case 'u':
+                    }
+                    case 'u': {
                         this->iterator += 4;
                         // TODO
                         continue;
+                    }
                 }
             }
             target += c;
@@ -204,13 +206,14 @@ namespace so {
             case ',': // value separator
                 return static_cast<token>(c);
 
-            default:
+            default: {
                 if (std::isdigit(c)) {
                     return token::number;
                 }
                 else {
                     throw json_decode_error{this->dump() + " invalid literal."};
                 }
+            }
         }
     }
 

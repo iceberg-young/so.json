@@ -45,19 +45,21 @@ namespace so {
 
     json& json::operator()(size_t index) {
         switch (this->data->type) {
-            case content_type::object:
+            case content_type::object: {
                 return (*this)(std::to_string(index));
-
-            case content_type::null:
+            }
+            case content_type::null: {
                 this->be_array(array_t(index + 1));
-
-            default:
+                // Continue with default.
+            }
+            default: {
                 auto& array = json_array::get(this->data);
                 if (index >= array.size()) {
                     array.resize(index + 1);
                 }
                 return array[index];
-        }
+            }
+        };
     }
 
     std::string json_array::to_string() const {
