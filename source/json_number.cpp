@@ -1,4 +1,5 @@
 #include "json_number.hpp"
+#include "numeric.hpp"
 
 namespace so {
     json::json(double value) :
@@ -26,8 +27,6 @@ namespace so {
     }
 
     void json_number::stringify(std::string& target) const {
-        char buffer[24];
-        std::snprintf(buffer, sizeof(buffer), "%.17g", this->value);
-        target += buffer;
+        target += dec_str(this->value);
     }
 }

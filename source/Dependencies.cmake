@@ -1,1 +1,1 @@
-include_directories(../vendor/text/include)
+include_directories(../vendor/numeric/include)

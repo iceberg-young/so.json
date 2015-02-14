@@ -6,7 +6,7 @@
 #include "json_array.hpp"
 #include "json_object.hpp"
 #include "json_decode.hpp"
-#include "text/number.hpp"
+#include "numeric.hpp"
 
 namespace so {
     json json_decode::run() {
@@ -44,7 +44,7 @@ namespace so {
                 return json_true::solo;
             }
             case token::number: {
-                return json::data_t{new json_number{text::dec(this->iterator)}};
+                return json::data_t{new json_number{dec(this->iterator)}};
             }
             case token::string: {
                 return json::data_t{new json_string{this->parse_string()}};
