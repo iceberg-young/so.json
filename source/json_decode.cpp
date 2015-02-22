@@ -7,12 +7,19 @@
 #include "json_object.hpp"
 #include "json_decode.hpp"
 #include "numeric.hpp"
+#include "unicode.hpp"
 
 namespace so {
-    json json_decode::run() {
-        --this->iterator;
-        return json{this->cascade(this->next())};
-    };
+    json json_decode::run(json::literal_t& begin) {
+        json_decode decoder{begin};
+        return json{decoder.cascade(decoder.next())};
+    }
+
+    std::string json_decode::dump() {
+        auto c = std::to_string(int(*this->iterator));
+        auto d = std::to_string(this->iterator - this->begin);
+        return '[' + c + '@' + d + ']';
+    }
 
     json::data_t json_decode::cascade(token t) {
         auto node = this->factory(t);
@@ -44,7 +51,9 @@ namespace so {
                 return json_true::solo;
             }
             case token::number: {
-                return json::data_t{new json_number{dec(this->iterator)}};
+                double number = dec(this->iterator);
+                --this->iterator;
+                return json::data_t{new json_number{number}};
             }
             case token::string: {
                 return json::data_t{new json_string{this->parse_string()}};
@@ -62,22 +71,19 @@ namespace so {
     }
 
     void json_decode::fill_children(json::array_t& array) {
-        token t;
-        bool s = true;
-        while (token::array_end != (t = this->next())) {
-            if (this->separator(t, s)) {continue;}
-            array.emplace_back(this->cascade(t));
+        bool initial = true;
+        token child;
+        while (this->next(token::array_end, initial, child)) {
+            array.emplace_back(this->cascade(child));
         }
     }
 
     void json_decode::fill_children(json::object_t& object) {
-        token t;
-        bool s = true;
-        while (token::object_end != (t = this->next())) {
-            if (this->separator(t, s)) {continue;}
-
+        bool initial = true;
+        token child;
+        while (this->next(token::object_end, initial, child)) {
             // name
-            if (t != token::string) {
+            if (child != token::string) {
                 throw json_decode_error{this->dump() + " name (string) is expected."};
             }
             auto name = this->parse_string();
@@ -92,57 +98,12 @@ namespace so {
         }
     }
 
-    void json_decode::pass_literals(const std::string& expected) {
-        for (auto c : expected) {
-            if (c != *++this->iterator) {
-                throw json_decode_error{this->dump() + " expected: " + c};
-            }
+    char json_decode::forward() {
+        char c = *++this->iterator;
+        if (!c) {
+            throw json_decode_error{this->dump() + " unexpected end."};
         }
-    }
-
-    std::string json_decode::parse_string() {
-        std::string target;
-        target.reserve(32); //< HACK
-        while (*++this->iterator != '"') {
-            char c = *this->iterator;
-            if (c == '\\') {
-                switch (c = *++this->iterator) {
-                    case 'b': {
-                        c = '\b';
-                        break;
-                    }
-                    case 'f': {
-                        c = '\f';
-                        break;
-                    }
-                    case 'n': {
-                        c = '\n';
-                        break;
-                    }
-                    case 'r': {
-                        c = '\r';
-                        break;
-                    }
-                    case 't': {
-                        c = '\t';
-                        break;
-                    }
-                    case 'u': {
-                        this->iterator += 4;
-                        // TODO
-                        continue;
-                    }
-                }
-            }
-            target += c;
-        }
-        return target;
-    }
-
-    std::string json_decode::dump() {
-        auto c = std::to_string(int(*this->iterator));
-        auto d = std::to_string(this->iterator - this->begin);
-        return '[' + c + '@' + d + ']';
+        return c;
     }
 
     json_decode::token json_decode::next() {
@@ -172,10 +133,70 @@ namespace so {
         }
     }
 
-    bool json_decode::separator(token t, bool& s) {
-        if (!s and t != token::value_separator) {
+    bool json_decode::next(token end, bool& initial, token& child) {
+        child = this->next();
+        if (initial) {
+            initial = false;
+            return end != child;
+        }
+        if (child == end) return false;
+        if (child != token::value_separator) {
             throw json_decode_error{this->dump() + " value separator (,) is expected."};
         }
-        return s = !s;
+        if ((child = this->next()) == end) {
+            throw json_decode_error{this->dump() + " redundant value separator (,)."};
+        }
+        return true;
+    }
+
+    void json_decode::pass_literals(const std::string& expected) {
+        for (auto c : expected) {
+            if (c != *++this->iterator) {
+                throw json_decode_error{this->dump() + " expected: " + c};
+            }
+        }
+    }
+
+    std::string json_decode::parse_string() {
+        std::string target;
+        target.reserve(32); //< FIXME: HACK
+        char c;
+        while ((c = this->forward()) != '"') {
+            if (c == '\\') {
+                switch (c = this->forward()) {
+                    case 'b': {
+                        c = '\b';
+                        break;
+                    }
+                    case 'f': {
+                        c = '\f';
+                        break;
+                    }
+                    case 'n': {
+                        c = '\n';
+                        break;
+                    }
+                    case 'r': {
+                        c = '\r';
+                        break;
+                    }
+                    case 't': {
+                        c = '\t';
+                        break;
+                    }
+                    case 'u': {
+                        char32_t code = hex(++this->iterator, 4);
+                        if (is::surrogate(code)) {
+                            // TODO
+                        }
+                        target += utf8(code);
+                        --this->iterator;
+                        continue;
+                    }
+                }
+            }
+            target += c;
+        }
+        return target;
     }
 }

@@ -7,6 +7,9 @@ namespace so {
     class json_decode
     {
     public:
+        static json run(json::literal_t& begin);
+
+    protected:
         enum class token :
           char
         {
@@ -23,14 +26,21 @@ namespace so {
             value_separator = ',',
         };
 
-    public:
+    protected:
         json_decode(json::literal_t& begin) :
           begin(begin),
           iterator(begin) {
+            // Counteract the first forward in next().
+            --this->iterator;
         }
 
-    public:
-        json run();
+        ~json_decode() {
+            // Move beyond the end.
+            ++this->iterator;
+        }
+
+        // Iterator information for debug.
+        std::string dump();
 
     protected:
         // Create cascade node.
@@ -45,21 +55,18 @@ namespace so {
         // Create children for an object node.
         void fill_children(json::object_t& object);
 
-    protected:
-        // Move iterator over the expected literals.
-        void pass_literals(const std::string& expected);
-
-        std::string parse_string();
-
-    protected:
-        // Iterator information for debug.
-        std::string dump();
+        char forward();
 
         // Guess type of next node.
         token next();
 
-        // Check if value-separator takes post.
-        bool separator(token t, bool& s);
+        // Skip value-separator.
+        bool next(token end, bool& initial, token& child);
+
+        // Move iterator over the expected literals.
+        void pass_literals(const std::string& expected);
+
+        std::string parse_string();
 
     private:
         const json::literal_t begin;

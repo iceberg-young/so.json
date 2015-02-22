@@ -16,8 +16,7 @@ namespace so {
     }
 
     json json::parse(literal_t& iterator) {
-        json_decode decoder(iterator);
-        return decoder.run();
+        return json_decode::run(iterator);
     }
 
     std::string json::stringify() const {
