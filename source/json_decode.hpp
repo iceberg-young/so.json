@@ -66,6 +66,8 @@ namespace so {
         // Move iterator over the expected literals.
         void pass_literals(const std::string& expected);
 
+        double parse_number();
+
         std::string parse_string();
 
     private:

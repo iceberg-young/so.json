@@ -1,3 +1,4 @@
+#include <sstream>
 #include "json_null.hpp"
 #include "json_boolean.hpp"
 #include "json_number.hpp"
@@ -58,7 +59,7 @@ namespace so {
     }
 
     void json_data::escape(const std::string& source, std::string& target) {
-        for (auto c : source) {
+        for (unsigned c : source) {
             if (c < 0x20) {
                 target += '\\';
                 switch (c) {
@@ -83,9 +84,12 @@ namespace so {
                         break;
                     }
                     default: {
-                        char buffer[6];
-                        std::sprintf(buffer, "u%04X", c);
-                        target += buffer;
+                        target += 'u';
+                        std::stringstream ss;
+                        ss.fill('0');
+                        ss.width(4);
+                        ss << std::hex << int(c);
+                        target += ss.str();
                         break;
                     }
                 }

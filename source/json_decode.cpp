@@ -6,7 +6,6 @@
 #include "json_array.hpp"
 #include "json_object.hpp"
 #include "json_decode.hpp"
-#include "numeric.hpp"
 #include "unicode.hpp"
 
 namespace so {
@@ -51,9 +50,7 @@ namespace so {
                 return json_true::solo;
             }
             case token::number: {
-                double number = dec(this->iterator);
-                --this->iterator;
-                return json::data_t{new json_number{number}};
+                return json::data_t{new json_number{this->parse_number()}};
             }
             case token::string: {
                 return json::data_t{new json_string{this->parse_string()}};
@@ -157,6 +154,17 @@ namespace so {
         }
     }
 
+    double json_decode::parse_number() {
+        const char* begin = &*this->iterator;
+        char* end = nullptr;
+        double value = strtod(begin, &end);
+        if (end == begin) {
+            throw json_decode_error{this->dump() + " invalid number."};
+        }
+        this->iterator += end - begin - 1;
+        return value;
+    }
+
     std::string json_decode::parse_string() {
         std::string target;
         target.reserve(32); //< FIXME: HACK
@@ -185,12 +193,8 @@ namespace so {
                         break;
                     }
                     case 'u': {
-                        char32_t code = hex(++this->iterator, 4);
-                        if (is::surrogate(code)) {
-                            // TODO
-                        }
-                        target += utf8(code);
-                        --this->iterator;
+                        // TODO
+                        this->iterator += 4;
                         continue;
                     }
                 }

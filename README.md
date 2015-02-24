@@ -3,7 +3,7 @@ so.json
 
 [JSON] *is a lightweight, text-based, language-independent data interchange format.*
 
-This library brings a set of natural API into C++ for playing with JSON data.
+This library brings a natural interface into C++ for playing with JSON data.
 
 
 But, why another wheel?
@@ -23,7 +23,7 @@ I don't like them, because:
 
 2. They are written in C (or C in mind), which are still hardly playing with their memories.
 
-3. They are not written against the standard.
+3. They are not written against the JSON standard.
    The JSON standard is [RFC 7159]. Neither [RFC 4627] nor the one specified in [JSON.org].
    See the [history] for fun!
 

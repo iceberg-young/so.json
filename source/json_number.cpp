@@ -1,5 +1,5 @@
+#include <sstream>
 #include "json_number.hpp"
-#include "numeric.hpp"
 
 namespace so {
     json::json(double value) :
@@ -27,6 +27,9 @@ namespace so {
     }
 
     void json_number::stringify(std::string& target) const {
-        target += dec_str(this->value);
+        std::stringstream ss;
+        ss.precision(16);
+        ss << this->value;
+        target += ss.str();
     }
 }
