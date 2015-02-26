@@ -193,8 +193,8 @@ namespace so {
                         break;
                     }
                     case 'u': {
-                        // TODO
-                        this->iterator += 4;
+                        target += utf8(escaped(--this->iterator));
+                        --this->iterator;
                         continue;
                     }
                 }
