@@ -55,7 +55,7 @@ namespace so {
         // Create children for an object node.
         void fill_children(json::object_t& object);
 
-        char forward();
+        char go_forward();
 
         // Guess type of next node.
         token next();

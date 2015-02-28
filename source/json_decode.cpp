@@ -1,4 +1,3 @@
-#include <cmath>
 #include "json_null.hpp"
 #include "json_boolean.hpp"
 #include "json_number.hpp"
@@ -9,6 +8,20 @@
 #include "unicode.hpp"
 
 namespace so {
+    namespace {
+        bool is_white(char c) {
+            switch (c) {
+                case '\t':
+                case '\n':
+                case '\r':
+                case 0x20:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
+
     json json_decode::run(json::literal_t& begin) {
         json_decode decoder{begin};
         return json{decoder.cascade(decoder.next())};
@@ -95,7 +108,7 @@ namespace so {
         }
     }
 
-    char json_decode::forward() {
+    char json_decode::go_forward() {
         char c = *++this->iterator;
         if (!c) {
             throw json_decode_error{this->dump() + " unexpected end."};
@@ -104,7 +117,7 @@ namespace so {
     }
 
     json_decode::token json_decode::next() {
-        while (std::isspace(*++this->iterator)) {}
+        while (is_white(*++this->iterator)) {}
         switch (char c = *this->iterator) {
             case 'n': // null
             case 'f': // false
@@ -120,7 +133,7 @@ namespace so {
                 return static_cast<token>(c);
 
             default: {
-                if (std::isdigit(c)) {
+                if (c >= '0' and c <= '9') {
                     return token::number;
                 }
                 else {
@@ -169,9 +182,9 @@ namespace so {
         std::string target;
         target.reserve(32); //< FIXME: HACK
         char c;
-        while ((c = this->forward()) != '"') {
+        while ((c = this->go_forward()) != '"') {
             if (c == '\\') {
-                switch (c = this->forward()) {
+                switch (c = this->go_forward()) {
                     case 'b': {
                         c = '\b';
                         break;
