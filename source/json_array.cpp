@@ -64,7 +64,7 @@ namespace so {
 
     std::string json_array::to_string() const {
         std::string s;
-        if (!this->value.empty()) {
+        if (not this->value.empty()) {
             auto e = --this->value.end();
             for (auto i = this->value.begin(); i != e; ++i) {
                 (s += i->data->to_string()) += ',';
@@ -85,7 +85,7 @@ namespace so {
 
     void json_array::stringify(std::string& target) const {
         target += '[';
-        if (!this->value.empty()) {
+        if (not this->value.empty()) {
             auto e = --this->value.end();
             for (auto i = this->value.begin(); i != e; ++i) {
                 i->data->stringify(target);

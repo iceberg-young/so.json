@@ -59,7 +59,7 @@ namespace so {
 
     void json_object::stringify(std::string& target) const {
         target += '{';
-        if (!this->value.empty()) {
+        if (not this->value.empty()) {
             auto e = --this->value.end();
             for (auto i = this->value.begin(); i != e; ++i) {
                 append_pair(i->first, i->second, target);

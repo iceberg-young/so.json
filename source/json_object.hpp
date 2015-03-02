@@ -46,7 +46,7 @@ namespace so {
 
     public:
         bool to_boolean() const override {
-            return !this->value.empty();
+            return not this->value.empty();
         }
 
         std::string to_string() const override {

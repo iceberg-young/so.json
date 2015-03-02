@@ -3,7 +3,7 @@ TODO
 
 
 - README.md
-- unescape UTF-16 (\uXXXX)
-- test / more benchmark
-- structure for include
+- test
+- benchmark
 - pretty print?
+- operator+= / overlap

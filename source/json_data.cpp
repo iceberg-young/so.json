@@ -59,8 +59,8 @@ namespace so {
     }
 
     void json_data::escape(const std::string& source, std::string& target) {
-        for (unsigned c : source) {
-            if (c < 0x20) {
+        for (auto c : source) {
+            if (c >= 0 and c < 0x20) {
                 target += '\\';
                 switch (c) {
                     case '\b': {

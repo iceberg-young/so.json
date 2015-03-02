@@ -110,7 +110,7 @@ namespace so {
 
     char json_decode::go_forward() {
         char c = *++this->iterator;
-        if (!c) {
+        if (c == 0) {
             throw json_decode_error{this->dump() + " unexpected end."};
         }
         return c;
