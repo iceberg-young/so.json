@@ -1,10 +1,10 @@
-#include <sstream>
 #include "json_null.hpp"
 #include "json_boolean.hpp"
 #include "json_number.hpp"
 #include "json_string.hpp"
 #include "json_array.hpp"
 #include "json_object.hpp"
+#include "unicode.hpp"
 
 namespace so {
     json& json::be(content_type type) {
@@ -84,12 +84,8 @@ namespace so {
                         break;
                     }
                     default: {
-                        target += 'u';
-                        std::stringstream ss;
-                        ss.fill('0');
-                        ss.width(4);
-                        ss << std::hex << int(c);
-                        target += ss.str();
+                        target.pop_back();
+                        target += so::escape(std::u16string{char16_t(c)});
                         break;
                     }
                 }

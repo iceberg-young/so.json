@@ -1,4 +1,3 @@
-#include <sstream>
 #include "json_number.hpp"
 
 namespace so {
@@ -27,9 +26,8 @@ namespace so {
     }
 
     void json_number::stringify(std::string& target) const {
-        std::stringstream ss;
-        ss.precision(16);
-        ss << this->value;
-        target += ss.str();
+        char buffer[sizeof("-0.1234567890123456e+308")];
+        snprintf(buffer, sizeof(buffer), "%.16g", this->value);
+        target += buffer;
     }
 }

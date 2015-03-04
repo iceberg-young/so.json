@@ -90,7 +90,7 @@ namespace so {
         static json parse(literal_t& iterator);
 
         static json parse(const std::string& text) {
-            auto iterator = text.cbegin();
+            auto iterator = text.begin();
             return json::parse(iterator);
         }
 
