@@ -30,6 +30,7 @@ namespace so {
                 return this->be_object(this->data->to_object());
             }
         }
+        throw type;
     }
 
     bool json::operator==(const json& other) const {
@@ -56,6 +57,7 @@ namespace so {
                 return json_object::get(this->data) == json_object::get(other.data);
             }
         }
+        throw type;
     }
 
     void json_data::escape(const std::string& source, std::string& target) {
@@ -85,7 +87,7 @@ namespace so {
                     }
                     default: {
                         target.pop_back();
-                        target += so::escape(std::u16string{char16_t(c)});
+                        target += unicode::escape(std::u16string{char16_t(c)});
                         break;
                     }
                 }
@@ -120,5 +122,6 @@ namespace so {
                 return json::data_t{new json_object};
             }
         }
+        throw type;
     }
 }

@@ -44,6 +44,10 @@ namespace so {
                 this->fill_children(json_object::get(node));
                 break;
             }
+            default: {
+                // Nothing to do.
+                break;
+            }
         }
         return node;
     }
@@ -206,9 +210,13 @@ namespace so {
                         break;
                     }
                     case 'u': {
-                        target += utf8(escaped(--this->iterator));
+                        target += utf8(unicode::escaped(--this->iterator));
                         --this->iterator;
                         continue;
+                    }
+                    default: {
+                        // Nothing to do.
+                        break;
                     }
                 }
             }
