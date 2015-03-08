@@ -240,11 +240,11 @@ namespace so {
         data_t data;
     };
 
-    class json_decode_error :
+    class json_parse_error :
       public std::domain_error
     {
     public:
-        explicit json_decode_error(const std::string& what) :
+        explicit json_parse_error(const std::string& what) :
           domain_error(what) {
         }
     };

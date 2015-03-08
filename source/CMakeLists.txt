@@ -12,7 +12,7 @@ set(SOURCE_FILES
     json_string.cpp
     json_array.cpp
     json_object.cpp
-    json_decode.cpp
+    json_parser.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})

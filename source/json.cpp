@@ -1,5 +1,5 @@
 #include "json_data.hpp"
-#include "json_decode.hpp"
+#include "json_parser.hpp"
 
 namespace so {
     json::json(content_type type) :
@@ -16,7 +16,7 @@ namespace so {
     }
 
     json json::parse(literal_t& iterator) {
-        return json_decode::run(iterator);
+        return json_parser::run(iterator);
     }
 
     std::string json::stringify() const {

@@ -59,7 +59,7 @@ namespace so {
                 }
                 return array[index];
             }
-        };
+        }
     }
 
     std::string json_array::to_string() const {

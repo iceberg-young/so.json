@@ -4,7 +4,7 @@
 #include "json_string.hpp"
 #include "json_array.hpp"
 #include "json_object.hpp"
-#include "json_decode.hpp"
+#include "json_parser.hpp"
 #include "unicode.hpp"
 
 namespace so {
@@ -22,18 +22,18 @@ namespace so {
         }
     }
 
-    json json_decode::run(json::literal_t& begin) {
-        json_decode decoder{begin};
-        return json{decoder.cascade(decoder.next())};
+    json json_parser::run(json::literal_t& begin) {
+        json_parser parser{begin};
+        return json{parser.cascade(parser.next())};
     }
 
-    std::string json_decode::dump() {
+    std::string json_parser::dump() {
         auto c = std::to_string(int(*this->iterator));
         auto d = std::to_string(this->iterator - this->begin);
         return '[' + c + '@' + d + ']';
     }
 
-    json::data_t json_decode::cascade(token t) {
+    json::data_t json_parser::cascade(token t) {
         auto node = this->factory(t);
         switch (node->type) {
             case json::content_type::array: {
@@ -52,7 +52,7 @@ namespace so {
         return node;
     }
 
-    json::data_t json_decode::factory(token t) {
+    json::data_t json_parser::factory(token t) {
         switch (t) {
             case token::null: {
                 this->pass_literals("ull");
@@ -79,12 +79,12 @@ namespace so {
                 return json::data_t{new json_object};
             }
             default: {
-                throw json_decode_error{this->dump() + " invalid node type."};
+                throw json_parse_error{this->dump() + " invalid node type."};
             }
         }
     }
 
-    void json_decode::fill_children(json::array_t& array) {
+    void json_parser::fill_children(json::array_t& array) {
         bool initial = true;
         token child;
         while (this->next(token::array_end, initial, child)) {
@@ -92,19 +92,19 @@ namespace so {
         }
     }
 
-    void json_decode::fill_children(json::object_t& object) {
+    void json_parser::fill_children(json::object_t& object) {
         bool initial = true;
         token child;
         while (this->next(token::object_end, initial, child)) {
             // name
             if (child != token::string) {
-                throw json_decode_error{this->dump() + " name (string) is expected."};
+                throw json_parse_error{this->dump() + " name (string) is expected."};
             }
             auto name = this->parse_string();
 
             // separator (:)
             if (this->next() != token::name_separator) {
-                throw json_decode_error{this->dump() + " name separator (:) is expected."};
+                throw json_parse_error{this->dump() + " name separator (:) is expected."};
             }
 
             // value
@@ -112,15 +112,15 @@ namespace so {
         }
     }
 
-    char json_decode::go_forward() {
+    char json_parser::go_forward() {
         char c = *++this->iterator;
         if (c == 0) {
-            throw json_decode_error{this->dump() + " unexpected end."};
+            throw json_parse_error{this->dump() + " unexpected end."};
         }
         return c;
     }
 
-    json_decode::token json_decode::next() {
+    json_parser::token json_parser::next() {
         while (is_white(*++this->iterator)) {}
         switch (char c = *this->iterator) {
             case 'n': // null
@@ -141,13 +141,13 @@ namespace so {
                     return token::number;
                 }
                 else {
-                    throw json_decode_error{this->dump() + " invalid literal."};
+                    throw json_parse_error{this->dump() + " invalid literal."};
                 }
             }
         }
     }
 
-    bool json_decode::next(token end, bool& initial, token& child) {
+    bool json_parser::next(token end, bool& initial, token& child) {
         child = this->next();
         if (initial) {
             initial = false;
@@ -155,34 +155,34 @@ namespace so {
         }
         if (child == end) return false;
         if (child != token::value_separator) {
-            throw json_decode_error{this->dump() + " value separator (,) is expected."};
+            throw json_parse_error{this->dump() + " value separator (,) is expected."};
         }
         if ((child = this->next()) == end) {
-            throw json_decode_error{this->dump() + " redundant value separator (,)."};
+            throw json_parse_error{this->dump() + " redundant value separator (,)."};
         }
         return true;
     }
 
-    void json_decode::pass_literals(const std::string& expected) {
+    void json_parser::pass_literals(const std::string& expected) {
         for (auto c : expected) {
             if (c != *++this->iterator) {
-                throw json_decode_error{this->dump() + " expected: " + c};
+                throw json_parse_error{this->dump() + " expected: " + c};
             }
         }
     }
 
-    double json_decode::parse_number() {
+    double json_parser::parse_number() {
         const char* begin = &*this->iterator;
         char* end = nullptr;
         double value = strtod(begin, &end);
         if (end == begin) {
-            throw json_decode_error{this->dump() + " invalid number."};
+            throw json_parse_error{this->dump() + " invalid number."};
         }
         this->iterator += end - begin - 1;
         return value;
     }
 
-    std::string json_decode::parse_string() {
+    std::string json_parser::parse_string() {
         std::string target;
         target.reserve(32); //< FIXME: HACK
         char c;

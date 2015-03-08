@@ -1,10 +1,10 @@
-#ifndef INCLUDE_SO_JSON_LEXER_ONCE_FLAG
-#define INCLUDE_SO_JSON_LEXER_ONCE_FLAG
+#ifndef INCLUDE_SO_JSON_PARSER_ONCE_FLAG
+#define INCLUDE_SO_JSON_PARSER_ONCE_FLAG
 
 #include "json.hpp"
 
 namespace so {
-    class json_decode
+    class json_parser
     {
     public:
         static json run(json::literal_t& begin);
@@ -27,14 +27,14 @@ namespace so {
         };
 
     protected:
-        json_decode(json::literal_t& begin) :
+        json_parser(json::literal_t& begin) :
           begin(begin),
           iterator(begin) {
             // Counteract the first forward in next().
             --this->iterator;
         }
 
-        ~json_decode() {
+        ~json_parser() {
             // Move beyond the end.
             ++this->iterator;
         }
@@ -77,4 +77,4 @@ namespace so {
     };
 }
 
-#endif//INCLUDE_SO_JSON_LEXER_ONCE_FLAG
+#endif//INCLUDE_SO_JSON_PARSER_ONCE_FLAG
