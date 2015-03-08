@@ -248,6 +248,32 @@ namespace so {
           domain_error(what) {
         }
     };
+
+    namespace is {
+        inline bool null(const json& v) {
+            return v.type() == json::content_type::null;
+        }
+
+        inline bool boolean(const json& v) {
+            return v.type() == json::content_type::boolean;
+        }
+
+        inline bool number(const json& v) {
+            return v.type() == json::content_type::number;
+        }
+
+        inline bool string(const json& v) {
+            return v.type() == json::content_type::string;
+        }
+
+        inline bool array(const json& v) {
+            return v.type() == json::content_type::array;
+        }
+
+        inline bool object(const json& v) {
+            return v.type() == json::content_type::object;
+        }
+    }
 }
 
 #endif//INCLUDE_SO_JSON_ONCE_FLAG
