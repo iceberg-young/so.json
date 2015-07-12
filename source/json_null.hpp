@@ -5,14 +5,13 @@
 
 namespace so {
     class json_null :
-      public json_data
-    {
-    public:
+      public json_data {
+     public:
         json_null() :
           json_data(json::content_type::null) {
         }
 
-    public:
+     public:
         bool to_boolean() const override {
             return false;
         }
@@ -25,12 +24,12 @@ namespace so {
             return "";
         }
 
-    public:
-        void stringify(std::string& target) const override {
+     public:
+        void stringify(std::string& target, const std::string& indent) const override {
             target += "null";
         }
 
-    public:
+     public:
         static json::data_t solo;
     };
 }

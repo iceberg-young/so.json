@@ -33,7 +33,7 @@ namespace so {
         return this->data->to_string();
     }
 
-    void json_string::stringify(std::string& target) const {
+    void json_string::stringify(std::string& target, const std::string& indent) const {
         target += '"';
         escape(this->value, target);
         target += '"';

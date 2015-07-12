@@ -83,15 +83,19 @@ namespace so {
         return o;
     }
 
-    void json_array::stringify(std::string& target) const {
+    void json_array::stringify(std::string& target, const std::string& indent) const {
         target += '[';
         if (not this->value.empty()) {
             auto e = --this->value.end();
+            auto pad = indent.empty() ? indent : indent + '\t';
             for (auto i = this->value.begin(); i != e; ++i) {
-                i->data->stringify(target);
+                target += pad;
+                i->data->stringify(target, pad);
                 target += ',';
             }
-            e->data->stringify(target);
+            target += pad;
+            e->data->stringify(target, pad);
+            target += indent;
         }
         target += ']';
     }

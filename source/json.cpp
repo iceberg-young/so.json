@@ -15,13 +15,13 @@ namespace so {
         return *this;
     }
 
-    json json::parse(literal_t& iterator) {
+    json json::parse(json_parser::literal_t& iterator) {
         return json_parser::run(iterator);
     }
 
-    std::string json::stringify() const {
+    std::string json::stringify(bool pretty) const {
         std::string target;
-        this->data->stringify(target);
+        this->data->stringify(target, pretty ? "\n" : "");
         return target;
     }
 

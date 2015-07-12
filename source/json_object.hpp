@@ -5,9 +5,8 @@
 
 namespace so {
     class json_object :
-      public json_data
-    {
-    public:
+      public json_data {
+     public:
         json_object() :
           json_data(json::content_type::object) {
         }
@@ -26,7 +25,7 @@ namespace so {
             return json::data_t{new json_object{*this}};
         }
 
-    public:
+     public: // Downcast helper.
         static json::object_t& get(const json::data_t& data) {
             return dynamic_cast<json_object&>(*data).value;
         }
@@ -39,12 +38,11 @@ namespace so {
             get(data).swap(value);
         }
 
-    public:
+     public:
         json::object_t to_object() override {
             return this->value;
         }
 
-    public:
         bool to_boolean() const override {
             return not this->value.empty();
         }
@@ -55,13 +53,10 @@ namespace so {
 
         json::array_t to_array() override;
 
-    public:
-        void stringify(std::string& target) const override;
+     public:
+        void stringify(std::string& target, const std::string& indent) const override;
 
-    protected:
-        static void append_pair(const std::string& name, const json& value, std::string& target);
-
-    private:
+     private:
         json::object_t value;
     };
 }

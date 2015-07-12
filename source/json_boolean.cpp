@@ -9,7 +9,7 @@ namespace so {
       data(value ? json_true::solo : json_false::solo) {
     }
 
-    json &json::be_boolean(bool value) {
+    json& json::be_boolean(bool value) {
         this->data = value ? json_true::solo : json_false::solo;
         return *this;
     }

@@ -9,11 +9,9 @@
 
 namespace so {
     // Representation of RFC-7159 specified object.
-    class json
-    {
-    public:
-        enum class content_type
-        {
+    class json {
+     public:
+        enum class content_type {
             null,
             boolean,
             number,
@@ -22,9 +20,7 @@ namespace so {
             object,
         };
 
-    public:
-        using literal_t = std::string::const_iterator;
-
+     public: // Type aliases.
         // Implementation type of content_type::object.
         using object_t = std::map<std::string, json>;
 
@@ -34,23 +30,36 @@ namespace so {
         // Implementation type of internal details.
         using data_t = std::shared_ptr<class json_data>;
 
-    public:
+     public: // Convert from/to JSON text.
+        // Initialize from a JSON text, may throw json_decode_error.
+        static json parse(std::string::const_iterator& iterator);
+
+        static json parse(const std::string& text) {
+            auto iterator = text.begin();
+            return json::parse(iterator);
+        }
+
+        // Format a JSON text.
+        std::string stringify(bool pretty = false) const;
+
+     public: // Constructors.
         // Initialize an empty node.
         json(content_type type);
 
         // Clone from the other node.
         json(const json& other);
 
-    public: // Steal from the other node.
+        // Steal from the other node.
         json(json&& other) noexcept :
           data(std::move(other.data)) {
         }
 
+        // Steal the heart.
         json(data_t&& data) noexcept :
           data(std::move(data)) {
         }
 
-    public: // Initialize by value.
+     public: // Initialize by value.
         json(std::nullptr_t value = nullptr);
 
         json(bool value);
@@ -77,32 +86,12 @@ namespace so {
 
         json(object_t&& value);
 
-    public:
-        json& operator=(const json& other);
-
-        json& operator=(json&& other) {
-            this->data.swap(other.data);
-            return *this;
-        }
-
-    public:
-        // Initialize from a JSON text, may throw json_decode_error.
-        static json parse(literal_t& iterator);
-
-        static json parse(const std::string& text) {
-            auto iterator = text.begin();
-            return json::parse(iterator);
-        }
-
-        // Get corresponding JSON text.
-        std::string stringify() const;
-
-    public: // Content type.
-        content_type type() const;
-
+     public: // Get/set content type.
         json& be(content_type type);
 
-    public: // Set content value. Return *this.
+        content_type type() const;
+
+     public: // Set content value. Return *this.
         json& be_null();
 
         json& be_boolean(bool value);
@@ -121,7 +110,7 @@ namespace so {
 
         json& be_object(object_t&& value);
 
-    public: // Shortcuts of setting content value. Return *this.
+     public: // Shortcuts of setting content value. Return *this.
         json& operator=(std::nullptr_t) {
             return this->be_null();
         }
@@ -166,7 +155,14 @@ namespace so {
             return this->be_object(std::move(value));
         }
 
-    public: // Get content value.
+        json& operator=(const json& other);
+
+        json& operator=(json&& other) {
+            this->data.swap(other.data);
+            return *this;
+        }
+
+     public: // Get content value.
         bool to_boolean() const;
 
         double to_number() const;
@@ -181,7 +177,7 @@ namespace so {
 
         object_t& as_object();
 
-    public: // Shortcuts of getting content value.
+     public: // Shortcuts of getting content value.
         operator bool() const {
             return this->to_boolean();
         }
@@ -214,7 +210,7 @@ namespace so {
             return this->as_object();
         }
 
-    public: // Throw std::out_of_range if not exist.
+     public: // Access child element. Throw std::out_of_range if not exist.
         json& operator[](size_t index);
 
         json& operator[](const std::string& key);
@@ -223,7 +219,7 @@ namespace so {
             return (*this)[std::string{key}];
         }
 
-    public: // Create if not exist.
+     public: // Access child element. Create if not exist.
         json& operator()(size_t index);
 
         json& operator()(const std::string& key);
@@ -232,18 +228,17 @@ namespace so {
             return (*this)(std::string{key});
         }
 
-    public:
+     public:
         bool operator==(const json& other) const;
 
-    public:
+     public:
         // The implementation details. Wrapped to minimise interface.
         data_t data;
     };
 
     class json_parse_error :
-      public std::domain_error
-    {
-    public:
+      public std::domain_error {
+     public:
         explicit json_parse_error(const std::string& what) :
           domain_error(what) {
         }

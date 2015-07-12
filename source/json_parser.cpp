@@ -22,12 +22,12 @@ namespace so {
         }
     }
 
-    json json_parser::run(json::literal_t& begin) {
+    json json_parser::run(literal_t& begin) {
         json_parser parser{begin};
         return json{parser.cascade(parser.next())};
     }
 
-    std::string json_parser::dump() {
+    std::string json_parser::location() {
         auto c = std::to_string(int(*this->iterator));
         auto d = std::to_string(this->iterator - this->begin);
         return '[' + c + '@' + d + ']';
@@ -79,7 +79,9 @@ namespace so {
                 return json::data_t{new json_object};
             }
             default: {
-                throw json_parse_error{this->dump() + " invalid node type."};
+                throw json_parse_error{
+                  this->location() + " invalid node type."
+                };
             }
         }
     }
@@ -98,13 +100,17 @@ namespace so {
         while (this->next(token::object_end, initial, child)) {
             // name
             if (child != token::string) {
-                throw json_parse_error{this->dump() + " name (string) is expected."};
+                throw json_parse_error{
+                  this->location() + " name (string) is expected."
+                };
             }
             auto name = this->parse_string();
 
             // separator (:)
             if (this->next() != token::name_separator) {
-                throw json_parse_error{this->dump() + " name separator (:) is expected."};
+                throw json_parse_error{
+                  this->location() + " name separator (:) is expected."
+                };
             }
 
             // value
@@ -115,7 +121,7 @@ namespace so {
     char json_parser::go_forward() {
         char c = *++this->iterator;
         if (c == 0) {
-            throw json_parse_error{this->dump() + " unexpected end."};
+            throw json_parse_error{this->location() + " unexpected end."};
         }
         return c;
     }
@@ -141,7 +147,9 @@ namespace so {
                     return token::number;
                 }
                 else {
-                    throw json_parse_error{this->dump() + " invalid literal."};
+                    throw json_parse_error{
+                      this->location() + " invalid literal."
+                    };
                 }
             }
         }
@@ -155,10 +163,14 @@ namespace so {
         }
         if (child == end) return false;
         if (child != token::value_separator) {
-            throw json_parse_error{this->dump() + " value separator (,) is expected."};
+            throw json_parse_error{
+              this->location() + " value separator (,) is expected."
+            };
         }
         if ((child = this->next()) == end) {
-            throw json_parse_error{this->dump() + " redundant value separator (,)."};
+            throw json_parse_error{
+              this->location() + " redundant value separator (,)."
+            };
         }
         return true;
     }
@@ -166,7 +178,7 @@ namespace so {
     void json_parser::pass_literals(const std::string& expected) {
         for (auto c : expected) {
             if (c != *++this->iterator) {
-                throw json_parse_error{this->dump() + " expected: " + c};
+                throw json_parse_error{this->location() + " expected: " + c};
             }
         }
     }
@@ -176,7 +188,7 @@ namespace so {
         char* end = nullptr;
         double value = strtod(begin, &end);
         if (end == begin) {
-            throw json_parse_error{this->dump() + " invalid number."};
+            throw json_parse_error{this->location() + " invalid number."};
         }
         this->iterator += end - begin - 1;
         return value;

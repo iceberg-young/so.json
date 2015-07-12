@@ -1,6 +1,23 @@
 #include "json_object.hpp"
 
 namespace so {
+    namespace {
+        void append_pair(
+          const std::string& name,
+          const json& value,
+          std::string& target,
+          const std::string& pad
+        ) {
+            target += '"';
+            json_data::escape(name, target);
+            target += "\":";
+            if (not pad.empty()) {
+                target += ' ';
+            }
+            value.data->stringify(target, pad);
+        }
+    }
+
     json::json(const object_t& value) :
       data(new json_object{value}) {
     }
@@ -57,15 +74,19 @@ namespace so {
         }
     }
 
-    void json_object::stringify(std::string& target) const {
+    void json_object::stringify(std::string& target, const std::string& indent) const {
         target += '{';
         if (not this->value.empty()) {
             auto e = --this->value.end();
+            auto pad = indent.empty() ? indent : indent + '\t';
             for (auto i = this->value.begin(); i != e; ++i) {
-                append_pair(i->first, i->second, target);
+                target += pad;
+                append_pair(i->first, i->second, target, pad);
                 target += ',';
             }
-            append_pair(e->first, e->second, target);
+            target += pad;
+            append_pair(e->first, e->second, target, pad);
+            target += indent;
         }
         target += '}';
     }
@@ -77,12 +98,5 @@ namespace so {
             a.push_back(v.second);
         }
         return a;
-    }
-
-    void json_object::append_pair(const std::string& name, const json& value, std::string& target) {
-        target += '"';
-        escape(name, target);
-        target += "\":";
-        value.data->stringify(target);
     }
 }

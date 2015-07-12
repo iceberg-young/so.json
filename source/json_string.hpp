@@ -5,9 +5,8 @@
 
 namespace so {
     class json_string :
-      public json_data
-    {
-    public:
+      public json_data {
+     public:
         json_string() :
           json_data(json::content_type::string) {
         }
@@ -26,7 +25,7 @@ namespace so {
             return json::data_t{new json_string{*this}};
         }
 
-    public:
+     public: // Downcast helper.
         static std::string& get(const json::data_t& data) {
             return dynamic_cast<json_string&>(*data).value;
         }
@@ -39,12 +38,11 @@ namespace so {
             get(data).swap(value);
         }
 
-    public:
+     public:
         std::string to_string() const override {
             return this->value;
         }
 
-    public:
         bool to_boolean() const override {
             return not this->value.empty();
         }
@@ -53,10 +51,10 @@ namespace so {
             return std::stod(this->value);
         }
 
-    public:
-        void stringify(std::string& target) const override;
+     public:
+        void stringify(std::string& target, const std::string& indent) const override;
 
-    private:
+     private:
         std::string value;
     };
 }

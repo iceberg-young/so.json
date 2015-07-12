@@ -4,15 +4,15 @@
 #include "json.hpp"
 
 namespace so {
-    class json_parser
-    {
-    public:
-        static json run(json::literal_t& begin);
+    class json_parser {
+     public:
+        using literal_t = std::string::const_iterator;
 
-    protected:
+        static json run(literal_t& begin);
+
+     protected:
         enum class token :
-          char
-        {
+          char {
             null = 'n',
             boolean_false = 'f',
             boolean_true = 't',
@@ -26,8 +26,8 @@ namespace so {
             value_separator = ',',
         };
 
-    protected:
-        json_parser(json::literal_t& begin) :
+     protected:
+        json_parser(literal_t& begin) :
           begin(begin),
           iterator(begin) {
             // Counteract the first forward in next().
@@ -40,9 +40,9 @@ namespace so {
         }
 
         // Iterator information for debug.
-        std::string dump();
+        std::string location();
 
-    protected:
+     protected:
         // Create cascade node.
         json::data_t cascade(token t);
 
@@ -70,10 +70,10 @@ namespace so {
 
         std::string parse_string();
 
-    private:
-        const json::literal_t begin;
+     private:
+        const literal_t begin;
 
-        json::literal_t& iterator;
+        literal_t& iterator;
     };
 }
 

@@ -6,14 +6,13 @@
 
 namespace so {
     class json_data :
-      public std::enable_shared_from_this<json_data>
-    {
-    public:
+      public std::enable_shared_from_this<json_data> {
+     public:
         static void escape(const std::string& source, std::string& target);
 
         static json::data_t factory(json::content_type type);
 
-    public:
+     public:
         json_data(json::content_type type) :
           type(type) {
         }
@@ -25,7 +24,7 @@ namespace so {
             return this->shared_from_this();
         }
 
-    public:
+     public:
         virtual bool to_boolean() const = 0;
 
         virtual std::string to_string() const = 0;
@@ -39,15 +38,17 @@ namespace so {
         }
 
         virtual json::object_t to_object() {
-            return json::object_t{std::make_pair(this->to_string(), json{this->clone()})};
+            return json::object_t{
+              std::make_pair(this->to_string(), json{this->clone()})
+            };
         }
 
-    public:
-        virtual void stringify(std::string& target) const {
+     public:
+        virtual void stringify(std::string& target, const std::string& indent) const {
             target += this->to_string();
         }
 
-    public:
+     public:
         const json::content_type type;
     };
 }

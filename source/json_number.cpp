@@ -21,11 +21,11 @@ namespace so {
 
     std::string json_number::to_string() const {
         std::string s;
-        stringify(s);
+        this->stringify(s, "");
         return s;
     }
 
-    void json_number::stringify(std::string& target) const {
+    void json_number::stringify(std::string& target, const std::string& indent) const {
         char buffer[sizeof("-0.1234567890123456e+308")];
         snprintf(buffer, sizeof(buffer), "%.16g", this->value);
         target += buffer;

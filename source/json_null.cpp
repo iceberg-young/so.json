@@ -7,7 +7,7 @@ namespace so {
       data(json_null::solo) {
     }
 
-    json &json::be_null() {
+    json& json::be_null() {
         this->data = json_null::solo;
         return *this;
     }
