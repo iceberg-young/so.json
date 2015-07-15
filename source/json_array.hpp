@@ -5,38 +5,16 @@
 
 namespace so {
     class json_array :
-      public json_data {
+      public json_copy<json_array, json::array_t, json::content_type::array> {
      public:
         json_array() :
-          json_data(json::content_type::array) {
-        }
+          json_copy() {}
 
         json_array(const json::array_t& value) :
-          json_data(json::content_type::array),
-          value(value) {
-        }
+          json_copy(value) {}
 
         json_array(json::array_t&& value) noexcept :
-          json_data(json::content_type::array),
-          value(std::move(value)) {
-        }
-
-        json::data_t clone() override {
-            return json::data_t{new json_array{*this}};
-        }
-
-     public: // Downcast helper.
-        static json::array_t& get(const json::data_t& data) {
-            return dynamic_cast<json_array&>(*data).value;
-        }
-
-        static void set(const json::data_t& data, const json::array_t& value) {
-            get(data) = value;
-        }
-
-        static void set(const json::data_t& data, json::array_t&& value) {
-            get(data).swap(value);
-        }
+          json_copy(std::move(value)) {}
 
      public:
         json::array_t to_array() override {
@@ -53,9 +31,6 @@ namespace so {
 
      public:
         void stringify(std::string& target, const std::string& indent) const override;
-
-     private:
-        json::array_t value;
     };
 }
 

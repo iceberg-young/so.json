@@ -5,6 +5,7 @@
 #include "json_array.hpp"
 #include "json_object.hpp"
 #include "unicode.hpp"
+#include <limits>
 
 namespace so {
     json& json::be(content_type type) {
@@ -62,9 +63,14 @@ namespace so {
 
     void json_data::escape(const std::string& source, std::string& target) {
         for (auto c : source) {
-            if (c >= 0 and c < 0x20) {
+            if ((c >= 0 and c < 0x20) or c == '"' or c == '\\') {
                 target += '\\';
                 switch (c) {
+                    case '"': // same as case '\\'
+                    case '\\': {
+                        target += c;
+                        break;
+                    }
                     case '\b': {
                         target += 'b';
                         break;
@@ -92,12 +98,7 @@ namespace so {
                     }
                 }
             }
-            else {
-                if (c == '"' or c == '\\') {
-                    target += '\\';
-                }
-                target += c;
-            }
+            else target += c;
         }
     }
 
@@ -110,18 +111,22 @@ namespace so {
                 return json_false::solo;
             }
             case json::content_type::number: {
-                return json::data_t{new json_number};
+                return std::make_shared<json_number>();
             }
             case json::content_type::string: {
-                return json::data_t{new json_string};
+                return std::make_shared<json_string>();
             }
             case json::content_type::array: {
-                return json::data_t{new json_array};
+                return std::make_shared<json_array>();
             }
             case json::content_type::object: {
-                return json::data_t{new json_object};
+                return std::make_shared<json_object>();
             }
         }
         throw type;
+    }
+
+    double json_data::to_number() const {
+        return std::numeric_limits<double>::quiet_NaN();
     }
 }

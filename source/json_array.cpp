@@ -2,16 +2,14 @@
 
 namespace so {
     json::json(const array_t& value) :
-      data(new json_array{value}) {
-    }
+      data(std::make_shared<json_array>(value)) {}
 
     json::json(array_t&& value) :
-      data(new json_array{std::move(value)}) {
-    }
+      data(std::make_shared<json_array>(std::move(value))) {}
 
     json& json::be_array(const array_t& value) {
         if (this->data->type != content_type::array) {
-            this->data = data_t{new json_array{value}};
+            this->data = std::make_shared<json_array>(value);
         }
         else {
             json_array::set(this->data, value);
@@ -21,7 +19,7 @@ namespace so {
 
     json& json::be_array(array_t&& value) {
         if (this->data->type != content_type::array) {
-            this->data = data_t{new json_array{std::move(value)}};
+            this->data = std::make_shared<json_array>(std::move(value));
         }
         else {
             json_array::set(this->data, std::move(value));

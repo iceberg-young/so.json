@@ -5,12 +5,7 @@
 
 namespace so {
     class json_false :
-      public json_data {
-     public:
-        json_false() :
-          json_data(json::content_type::boolean) {
-        }
-
+      public json_solo<json::content_type::boolean> {
      public:
         bool to_boolean() const override {
             return false;
@@ -25,21 +20,11 @@ namespace so {
         }
 
      public:
-        void stringify(std::string& target, const std::string& indent) const override {
-            target += "false";
-        }
-
-     public:
         static json::data_t solo;
     };
 
     class json_true :
-      public json_data {
-     public:
-        json_true() :
-          json_data(json::content_type::boolean) {
-        }
-
+      public json_solo<json::content_type::boolean> {
      public:
         bool to_boolean() const override {
             return true;
@@ -51,11 +36,6 @@ namespace so {
 
         std::string to_string() const override {
             return "true";
-        }
-
-     public:
-        void stringify(std::string& target, const std::string& indent) const override {
-            target += "true";
         }
 
      public:

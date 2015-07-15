@@ -19,16 +19,14 @@ namespace so {
     }
 
     json::json(const object_t& value) :
-      data(new json_object{value}) {
-    }
+      data(std::make_shared<json_object>(value)) {}
 
     json::json(object_t&& value) :
-      data(new json_object{std::move(value)}) {
-    }
+      data(std::make_shared<json_object>(std::move(value))) {}
 
     json& json::be_object(const object_t& value) {
         if (this->data->type != content_type::object) {
-            this->data = data_t{new json_object{value}};
+            this->data = std::make_shared<json_object>(value);
         }
         else {
             json_object::set(this->data, value);
@@ -38,7 +36,7 @@ namespace so {
 
     json& json::be_object(object_t&& value) {
         if (this->data->type != content_type::object) {
-            this->data = data_t{new json_object{std::move(value)}};
+            this->data = std::make_shared<json_object>(std::move(value));
         }
         else {
             json_object::set(this->data, std::move(value));

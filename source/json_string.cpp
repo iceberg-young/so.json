@@ -2,16 +2,16 @@
 
 namespace so {
     json::json(const std::string& value) :
-      data(new json_string{value}) {
+      data(std::make_shared<json_string>(value)) {
     }
 
     json::json(std::string&& value) :
-      data(new json_string{std::move(value)}) {
+      data(std::make_shared<json_string>(std::move(value))) {
     }
 
     json& json::be_string(const std::string& value) {
         if (this->data->type != content_type::string) {
-            this->data = data_t{new json_string{value}};
+            this->data = std::make_shared<json_string>(value);
         }
         else {
             json_string::set(this->data, value);
@@ -21,7 +21,7 @@ namespace so {
 
     json& json::be_string(std::string&& value) {
         if (this->data->type != content_type::string) {
-            this->data = data_t{new json_string{std::move(value)}};
+            this->data = std::make_shared<json_string>(std::move(value));
         }
         else {
             json_string::set(this->data, std::move(value));

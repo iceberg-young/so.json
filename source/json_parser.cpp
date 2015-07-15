@@ -67,16 +67,16 @@ namespace so {
                 return json_true::solo;
             }
             case token::number: {
-                return json::data_t{new json_number{this->parse_number()}};
+                return std::make_shared<json_number>(this->parse_number());
             }
             case token::string: {
-                return json::data_t{new json_string{this->parse_string()}};
+                return std::make_shared<json_string>(this->parse_string());
             }
             case token::array_begin: {
-                return json::data_t{new json_array};
+                return std::make_shared<json_array>();
             }
             case token::object_begin: {
-                return json::data_t{new json_object};
+                return std::make_shared<json_object>();
             }
             default: {
                 throw json_parse_error{
