@@ -65,6 +65,7 @@ namespace so {
             }
             case content_type::null: {
                 this->be_object(object_t{});
+                // Continue with default.
             }
             default: {
                 return json_object::get(this->data)[key];

@@ -14,15 +14,15 @@ namespace so {
           json_copy(value) {}
 
      public:
-        double to_number() const override {
+        double to_number() const final override {
             return this->value;
         }
 
-        bool to_boolean() const override {
+        bool to_boolean() const final override {
             return static_cast<bool>(this->value);
         }
 
-        std::string to_string() const override;
+        std::string to_string() const final override;
     };
 }
 

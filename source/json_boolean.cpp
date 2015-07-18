@@ -1,13 +1,12 @@
 #include "json_boolean.hpp"
 
 namespace so {
-    json::data_t json_true::solo{new json_true};
+    json::data_t json_false::solo{std::make_shared<json_false>()};
 
-    json::data_t json_false::solo{new json_false};
+    json::data_t json_true::solo{std::make_shared<json_true>()};
 
     json::json(bool value) :
-      data(value ? json_true::solo : json_false::solo) {
-    }
+      data(value ? json_true::solo : json_false::solo) {}
 
     json& json::be_boolean(bool value) {
         this->data = value ? json_true::solo : json_false::solo;

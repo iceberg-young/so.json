@@ -7,15 +7,15 @@ namespace so {
     class json_false :
       public json_solo<json::content_type::boolean> {
      public:
-        bool to_boolean() const override {
+        bool to_boolean() const final override {
             return false;
         }
 
-        double to_number() const override {
+        double to_number() const final override {
             return 0.0;
         }
 
-        std::string to_string() const override {
+        std::string to_string() const final override {
             return "false";
         }
 
@@ -26,15 +26,15 @@ namespace so {
     class json_true :
       public json_solo<json::content_type::boolean> {
      public:
-        bool to_boolean() const override {
+        bool to_boolean() const final override {
             return true;
         }
 
-        double to_number() const override {
+        double to_number() const final override {
             return 1.0;
         }
 
-        std::string to_string() const override {
+        std::string to_string() const final override {
             return "true";
         }
 

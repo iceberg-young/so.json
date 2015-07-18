@@ -62,7 +62,7 @@ namespace so {
           json_data(T_type),
           value(std::move(value)) {}
 
-        virtual json::data_t clone() override {
+        virtual json::data_t clone() final override {
             return std::make_shared<T_sub>(*dynamic_cast<T_sub* const>(this));
         }
 
@@ -91,7 +91,7 @@ namespace so {
         json_solo() :
           json_data(T_type) {}
 
-        virtual json::data_t clone() override {
+        virtual json::data_t clone() final override {
             return this->shared_from_this();
         }
     };

@@ -7,20 +7,20 @@ namespace so {
     class json_null :
       public json_solo<json::content_type::null> {
      public:
-        bool to_boolean() const override {
+        bool to_boolean() const final override {
             return false;
         }
 
-        double to_number() const override {
+        double to_number() const final override {
             return 0.0;
         }
 
-        std::string to_string() const override {
+        std::string to_string() const final override {
             return "";
         }
 
      public:
-        void stringify(std::string& target, const std::string& indent) const override {
+        void stringify(std::string& target, const std::string& indent) const final override {
             target += "null";
         }
 

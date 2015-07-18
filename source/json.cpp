@@ -3,12 +3,10 @@
 
 namespace so {
     json::json(content_type type) :
-      data(json_data::factory(type)) {
-    }
+      data(json_data::factory(type)) {}
 
     json::json(const json& other) :
-      data(other.data->clone()) {
-    }
+      data(other.data->clone()) {}
 
     json& json::operator=(const json& other) {
         this->data = other.data->clone();

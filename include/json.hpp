@@ -31,7 +31,7 @@ namespace so {
         using data_t = std::shared_ptr<class json_data>;
 
      public: // Convert from/to JSON text.
-        // Initialize from a JSON text, may throw json_decode_error.
+        // Initialize from a JSON text, may throw json_parse_error.
         static json parse(std::string::const_iterator& iterator);
 
         static json parse(const std::string& text) {
@@ -51,13 +51,11 @@ namespace so {
 
         // Steal from the other node.
         json(json&& other) noexcept :
-          data(std::move(other.data)) {
-        }
+          data(std::move(other.data)) {}
 
         // Steal the heart.
         json(data_t&& data) noexcept :
-          data(std::move(data)) {
-        }
+          data(std::move(data)) {}
 
      public: // Initialize by value.
         json(std::nullptr_t value = nullptr);
@@ -67,16 +65,14 @@ namespace so {
         json(double value);
 
         json(int value) :
-          json(double(value)) {
-        }
+          json(double(value)) {}
 
         json(const std::string& value);
 
         json(std::string&& value);
 
         json(const char* value) :
-          json(std::string{value}) {
-        }
+          json(std::string{value}) {}
 
         json(const array_t& value);
 
@@ -85,6 +81,8 @@ namespace so {
         json(const object_t& value);
 
         json(object_t&& value);
+
+        json(void*) = delete;
 
      public: // Get/set content type.
         json& be(content_type type);
@@ -240,8 +238,7 @@ namespace so {
       public std::domain_error {
      public:
         explicit json_parse_error(const std::string& what) :
-          domain_error(what) {
-        }
+          domain_error(what) {}
     };
 
     namespace is {
