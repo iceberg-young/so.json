@@ -6,6 +6,9 @@
 namespace so {
     class json_data {
      public:
+        static const std::string esc_label;
+        static const std::string esc_value;
+
         static void escape(const std::string& source, std::string& target);
 
         static json::data_t factory(json::content_type type);

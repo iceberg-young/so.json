@@ -61,44 +61,27 @@ namespace so {
         throw type;
     }
 
+    const std::string json_data::esc_label{"bfnrt"};
+    const std::string json_data::esc_value{"\b\f\n\r\t"};
+
     void json_data::escape(const std::string& source, std::string& target) {
         for (auto c : source) {
-            if ((c >= 0 and c < 0x20) or c == '"' or c == '\\') {
-                target += '\\';
-                switch (c) {
-                    case '"': // same as case '\\'
-                    case '\\': {
-                        target += c;
-                        break;
-                    }
-                    case '\b': {
-                        target += 'b';
-                        break;
-                    }
-                    case '\f': {
-                        target += 'f';
-                        break;
-                    }
-                    case '\n': {
-                        target += 'n';
-                        break;
-                    }
-                    case '\r': {
-                        target += 'r';
-                        break;
-                    }
-                    case '\t': {
-                        target += 't';
-                        break;
-                    }
-                    default: {
-                        target.pop_back();
-                        target += unicode::escape(std::u16string{char16_t(c)});
-                        break;
-                    }
+            if (c >= 0 and c < 0x20) {
+                auto pos = esc_value.find(c);
+                if (pos != std::string::npos) {
+                    target += '\\';
+                    target += esc_label[pos];
+                }
+                else {
+                    target += unicode::escape(std::u16string{char16_t(c)});
                 }
             }
-            else target += c;
+            else {
+                if (c == '"' or c == '\\') {
+                    target += '\\';
+                }
+                target += c;
+            }
         }
     }
 

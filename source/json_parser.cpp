@@ -8,19 +8,20 @@
 #include "unicode.hpp"
 
 namespace so {
-    namespace {
-        bool is_white(char c) {
-            switch (c) {
-                case '\t':
-                case '\n':
-                case '\r':
-                case 0x20:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-    }
+    enum class json_token :
+      char {
+        null = 'n',
+        boolean_false = 'f',
+        boolean_true = 't',
+        number = '-',
+        string = '"',
+        array_begin = '[',
+        array_end = ']',
+        object_begin = '{',
+        object_end = '}',
+        name_separator = ':',
+        value_separator = ',',
+    };
 
     json json_parser::run(literal_t& begin) {
         json_parser parser{begin};
@@ -33,7 +34,7 @@ namespace so {
         return '[' + c + '@' + d + ']';
     }
 
-    json::data_t json_parser::cascade(token t) {
+    json::data_t json_parser::cascade(json_token t) {
         auto node = this->factory(t);
         switch (node->type) {
             case json::content_type::array: {
@@ -52,30 +53,30 @@ namespace so {
         return node;
     }
 
-    json::data_t json_parser::factory(token t) {
+    json::data_t json_parser::factory(json_token t) {
         switch (t) {
-            case token::null: {
+            case json_token::null: {
                 this->pass_literals("ull");
                 return json_null::solo;
             }
-            case token::boolean_false: {
+            case json_token::boolean_false: {
                 this->pass_literals("alse");
                 return json_false::solo;
             }
-            case token::boolean_true: {
+            case json_token::boolean_true: {
                 this->pass_literals("rue");
                 return json_true::solo;
             }
-            case token::number: {
+            case json_token::number: {
                 return std::make_shared<json_number>(this->parse_number());
             }
-            case token::string: {
+            case json_token::string: {
                 return std::make_shared<json_string>(this->parse_string());
             }
-            case token::array_begin: {
+            case json_token::array_begin: {
                 return std::make_shared<json_array>();
             }
-            case token::object_begin: {
+            case json_token::object_begin: {
                 return std::make_shared<json_object>();
             }
             default: {
@@ -87,19 +88,18 @@ namespace so {
     }
 
     void json_parser::fill_children(json::array_t& array) {
-        bool initial = true;
-        token child;
-        while (this->next(token::array_end, initial, child)) {
+        json_token child = this->next();
+        while (child != json_token::array_end) {
             array.emplace_back(this->cascade(child));
+            child = this->next_peer(json_token::array_end);
         }
     }
 
     void json_parser::fill_children(json::object_t& object) {
-        bool initial = true;
-        token child;
-        while (this->next(token::object_end, initial, child)) {
+        json_token child = this->next();
+        while (child != json_token::object_end) {
             // name
-            if (child != token::string) {
+            if (child != json_token::string) {
                 throw json_parse_error{
                   this->location() + " name (string) is expected."
                 };
@@ -107,7 +107,7 @@ namespace so {
             auto name = this->parse_string();
 
             // separator (:)
-            if (this->next() != token::name_separator) {
+            if (this->next() != json_token::name_separator) {
                 throw json_parse_error{
                   this->location() + " name separator (:) is expected."
                 };
@@ -115,82 +115,73 @@ namespace so {
 
             // value
             object.emplace(std::move(name), this->cascade(this->next()));
+
+            // more
+            child = this->next_peer(json_token::object_end);
         }
     }
 
-    char json_parser::go_forward() {
-        char c = *++this->iterator;
-        if (c == 0) {
-            throw json_parse_error{this->location() + " unexpected end."};
-        }
-        return c;
+    namespace {
+        const std::string whitespaces{"\t\n\r "};
+        const std::string token_leads{"nft-\"[]{}:,"};
     }
 
-    json_parser::token json_parser::next() {
-        while (is_white(*++this->iterator)) {}
-        switch (char c = *this->iterator) {
-            case 'n': // null
-            case 'f': // false
-            case 't': // true
-            case '-': // number
-            case '"': // string
-            case '[': // array begin
-            case ']': // array end
-            case '{': // object begin
-            case '}': // object end
-            case ':': // name separator
-            case ',': // value separator
-                return static_cast<token>(c);
+    json_token json_parser::next() {
+        char c;
+        while (whitespaces.find(c = *this->iterator) != std::string::npos) {
+            ++this->iterator;
+        }
+        json_token t;
+        auto pos = token_leads.find(c);
+        if (pos != std::string::npos) {
+            t = static_cast<json_token>(c);
+        }
+        else if (c >= '0' and c <= '9') {
+            t = json_token::number;
+        }
+        else {
+            throw json_parse_error{
+              this->location() + " invalid literal."
+            };
+        }
+        ++this->iterator;
+        return t;
+    }
 
-            default: {
-                if (c >= '0' and c <= '9') {
-                    return token::number;
-                }
-                else {
-                    throw json_parse_error{
-                      this->location() + " invalid literal."
-                    };
-                }
+    json_token json_parser::next_peer(json_token end) {
+        json_token child = this->next();
+        if (child != end) {
+            if (child != json_token::value_separator) {
+                throw json_parse_error{
+                  this->location() + " value separator (,) is expected."
+                };
+            }
+            child = this->next();
+            if (child == end) {
+                throw json_parse_error{
+                  this->location() + " redundant value separator (,)."
+                };
             }
         }
-    }
-
-    bool json_parser::next(token end, bool& initial, token& child) {
-        child = this->next();
-        if (initial) {
-            initial = false;
-            return end != child;
-        }
-        if (child == end) return false;
-        if (child != token::value_separator) {
-            throw json_parse_error{
-              this->location() + " value separator (,) is expected."
-            };
-        }
-        if ((child = this->next()) == end) {
-            throw json_parse_error{
-              this->location() + " redundant value separator (,)."
-            };
-        }
-        return true;
+        return child;
     }
 
     void json_parser::pass_literals(const std::string& expected) {
         for (auto c : expected) {
-            if (c != *++this->iterator) {
+            if (c != *this->iterator++) {
                 throw json_parse_error{this->location() + " expected: " + c};
             }
         }
     }
 
     double json_parser::parse_number() {
-        const char* begin = &*this->iterator;
+        const char* begin = &*--this->iterator;
         char* end = nullptr;
         double value = strtod(begin, &end);
         if (end == begin) {
             throw json_parse_error{this->location() + " invalid number."};
         }
-        this->iterator += end - begin - 1;
+        this->iterator += end - begin;
         return value;
     }
 
@@ -198,42 +189,29 @@ namespace so {
         std::string target;
         target.reserve(32); //< FIXME: HACK
         char c;
-        while ((c = this->go_forward()) != '"') {
+        while (this->pick(c) != '"') {
             if (c == '\\') {
-                switch (c = this->go_forward()) {
-                    case 'b': {
-                        c = '\b';
-                        break;
-                    }
-                    case 'f': {
-                        c = '\f';
-                        break;
-                    }
-                    case 'n': {
-                        c = '\n';
-                        break;
-                    }
-                    case 'r': {
-                        c = '\r';
-                        break;
-                    }
-                    case 't': {
-                        c = '\t';
-                        break;
-                    }
-                    case 'u': {
-                        target += utf8(unicode::escaped(--this->iterator));
-                        --this->iterator;
-                        continue;
-                    }
-                    default: {
-                        // Nothing to do.
-                        break;
-                    }
+                ++this->iterator;
+                if (this->pick(c) == 'u') {
+                    target += utf8(unicode::escaped(--this->iterator));
+                    continue;
+                }
+                auto pos = json_data::esc_label.find(c);
+                if (pos != std::string::npos) {
+                    c = json_data::esc_value[pos];
                 }
             }
             target += c;
+            ++this->iterator;
         }
+        ++this->iterator;
         return target;
+    }
+
+    char json_parser::pick(char& c) {
+        if (not (c = *this->iterator)) {
+            throw json_parse_error{this->location() + " unexpected end."};
+        }
+        return c;
     }
 }
