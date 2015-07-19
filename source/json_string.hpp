@@ -17,16 +17,28 @@ namespace so {
           json_copy(std::move(value)) {}
 
      public:
-        std::string to_string() const final override {
-            return this->value;
-        }
-
         bool to_boolean() const final override {
             return not this->value.empty();
         }
 
         double to_number() const final override {
             return std::stod(this->value);
+        }
+
+        std::string to_string() const final override {
+            return this->value;
+        }
+
+        json::array_t to_array() const final override {
+            return this->value.empty()
+              ? json::array_t{}
+              : json::array_t{this->value};
+        }
+
+        json::object_t to_object() const final override {
+            return this->value.empty()
+              ? json::object_t{}
+              : json::object_t{{"0", this->value}};
         }
 
      public:

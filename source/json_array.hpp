@@ -17,17 +17,19 @@ namespace so {
           json_copy(std::move(value)) {}
 
      public:
-        json::array_t to_array() final override {
-            return this->value;
-        }
-
         bool to_boolean() const final override {
             return not this->value.empty();
         }
 
+        double to_number() const final override;
+
         std::string to_string() const final override;
 
-        json::object_t to_object() final override;
+        json::array_t to_array() const final override {
+            return this->value;
+        }
+
+        json::object_t to_object() const final override;
 
      public:
         void stringify(std::string& target, const std::string& indent) const final override;

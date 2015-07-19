@@ -1,4 +1,5 @@
 #include "json_object.hpp"
+#include <limits>
 
 namespace so {
     namespace {
@@ -73,6 +74,21 @@ namespace so {
         }
     }
 
+    double json_object::to_number() const {
+        return this->value.empty()
+          ? std::numeric_limits<double>::quiet_NaN()
+          : (double) this->value.begin()->second;
+    };
+
+    json::array_t json_object::to_array() const {
+        json::array_t a;
+        a.reserve(this->value.size());
+        for (auto& v : this->value) {
+            a.push_back(v.second);
+        }
+        return a;
+    }
+
     void json_object::stringify(std::string& target, const std::string& indent) const {
         target += '{';
         if (not this->value.empty()) {
@@ -88,14 +104,5 @@ namespace so {
             target += indent;
         }
         target += '}';
-    }
-
-    json::array_t json_object::to_array() {
-        json::array_t a;
-        a.reserve(this->value.size());
-        for (auto& v : this->value) {
-            a.push_back(v.second);
-        }
-        return a;
     }
 }

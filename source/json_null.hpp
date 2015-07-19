@@ -19,6 +19,14 @@ namespace so {
             return "";
         }
 
+        json::array_t to_array() const final override {
+            return json::array_t{};
+        }
+
+        json::object_t to_object() const final override {
+            return json::object_t{};
+        }
+
      public:
         void stringify(std::string& target, const std::string& indent) const final override {
             target += "null";

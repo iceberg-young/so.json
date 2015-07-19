@@ -22,10 +22,10 @@ namespace so {
     std::string json_number::to_string() const {
         const char* ptr = nullptr;
         if (std::isnan(this->value)) {
-            ptr = R"("NaN")";
+            ptr = "NaN";
         }
         else if (std::isinf(this->value)) {
-            ptr = this->value > 0 ? R"("Infinity")" : R"("-Infinity")";
+            ptr = this->value > 0 ? "Infinity" : "-Infinity";
         }
         else {
             char buffer[sizeof("-0.1234567890123456e+308")];
@@ -33,5 +33,17 @@ namespace so {
             ptr = buffer;
         }
         return std::string{ptr};
+    }
+
+    json::array_t json_number::to_array() const {
+        return std::isnan(this->value)
+          ? json::array_t{}
+          : json::array_t{this->value};
+    }
+
+    json::object_t json_number::to_object() const {
+        return std::isnan(this->value)
+          ? json::object_t{}
+          : json::object_t{{"0", this->value}};
     }
 }

@@ -5,7 +5,6 @@
 #include "json_array.hpp"
 #include "json_object.hpp"
 #include "unicode.hpp"
-#include <limits>
 
 namespace so {
     json& json::be(content_type type) {
@@ -107,9 +106,5 @@ namespace so {
             }
         }
         throw type;
-    }
-
-    double json_data::to_number() const {
-        return std::numeric_limits<double>::quiet_NaN();
     }
 }

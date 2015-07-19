@@ -26,17 +26,11 @@ namespace so {
 
         virtual std::string to_string() const = 0;
 
-        virtual double to_number() const;
+        virtual double to_number() const = 0;
 
-        virtual json::array_t to_array() {
-            return json::array_t{json{this->clone()}};
-        }
+        virtual json::array_t to_array() const = 0;
 
-        virtual json::object_t to_object() {
-            return json::object_t{
-              std::make_pair(this->to_string(), json{this->clone()})
-            };
-        }
+        virtual json::object_t to_object() const = 0;
 
      public:
         virtual void stringify(std::string& target, const std::string& indent) const {
@@ -47,51 +41,51 @@ namespace so {
         const json::content_type type;
     };
 
-    template<typename T_sub, typename T_value, json::content_type T_type>
+    template<typename sub_t, typename value_t, json::content_type type_t>
     class json_copy :
       public json_data {
      public:
         json_copy() :
-          json_data(T_type) {}
+          json_data(type_t) {}
 
-        json_copy(const T_value& value) :
-          json_data(T_type),
+        json_copy(const value_t& value) :
+          json_data(type_t),
           value(value) {}
 
-        json_copy(T_value&& value) noexcept :
-          json_data(T_type),
+        json_copy(value_t&& value) noexcept :
+          json_data(type_t),
           value(std::move(value)) {}
 
         virtual json::data_t clone() const final override {
-            return std::make_shared<T_sub>(*dynamic_cast<const T_sub* const>(this));
+            return std::make_shared<sub_t>(*dynamic_cast<const sub_t* const>(this));
         }
 
      public: // Downcast helper.
-        static T_value& get(const json::data_t& data) {
-            return dynamic_cast<T_sub&>(*data).value;
+        static value_t& get(const json::data_t& data) {
+            return dynamic_cast<sub_t&>(*data).value;
         }
 
-        static void set(const json::data_t& data, const T_value& value) {
+        static void set(const json::data_t& data, const value_t& value) {
             get(data) = value;
         }
 
-        static void set(const json::data_t& data, T_value&& value) {
+        static void set(const json::data_t& data, value_t&& value) {
             std::swap(get(data), value);
         }
 
      protected:
-        T_value value;
+        value_t value;
     };
 
-    template<typename T_sub, json::content_type T_type>
+    template<typename sub_t, json::content_type type_t>
     class json_solo :
       public json_data {
      public:
         json_solo() :
-          json_data(T_type) {}
+          json_data(type_t) {}
 
         virtual json::data_t clone() const final override {
-            return T_sub::solo;
+            return sub_t::solo;
         }
     };
 }

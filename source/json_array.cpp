@@ -1,4 +1,5 @@
 #include "json_array.hpp"
+#include <limits>
 
 namespace so {
     json::json(const array_t& value) :
@@ -60,6 +61,12 @@ namespace so {
         }
     }
 
+    double json_array::to_number() const {
+        return this->value.empty()
+          ? std::numeric_limits<double>::quiet_NaN()
+          : (double) *this->value.begin();
+    }
+
     std::string json_array::to_string() const {
         std::string s;
         if (not this->value.empty()) {
@@ -72,7 +79,7 @@ namespace so {
         return s;
     }
 
-    json::object_t json_array::to_object() {
+    json::object_t json_array::to_object() const {
         json::object_t o;
         int i = 0;
         for (auto& v : this->value) {

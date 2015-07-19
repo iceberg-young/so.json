@@ -16,7 +16,20 @@ namespace so {
         }
 
         std::string to_string() const final override {
-            return "false";
+            return "";
+        }
+
+        json::array_t to_array() const final override {
+            return json::array_t{};
+        }
+
+        json::object_t to_object() const final override {
+            return json::object_t{};
+        }
+
+     public:
+        void stringify(std::string& target, const std::string& indent) const final override {
+            target += "false";
         }
 
      public:
@@ -35,7 +48,20 @@ namespace so {
         }
 
         std::string to_string() const final override {
-            return "true";
+            return "1";
+        }
+
+        json::array_t to_array() const final override {
+            return json::array_t{true};
+        }
+
+        json::object_t to_object() const final override {
+            return json::object_t{{"0", true}};
+        }
+
+     public:
+        void stringify(std::string& target, const std::string& indent) const final override {
+            target += "true";
         }
 
      public:
