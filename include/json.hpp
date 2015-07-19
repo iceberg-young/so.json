@@ -32,6 +32,7 @@ namespace so {
 
      public: // Convert from/to JSON text.
         // Initialize from a JSON text, may throw json_parse_error.
+        // Will move the iterator to pass the end.
         static json parse(std::string::const_iterator& iterator);
 
         static json parse(const std::string& text) {
@@ -40,6 +41,7 @@ namespace so {
         }
 
         // Format a JSON text.
+        // false: all in one line; true: indented multi-line
         std::string stringify(bool pretty = false) const;
 
      public: // Constructors.

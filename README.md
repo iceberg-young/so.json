@@ -3,46 +3,173 @@ so.json
 
 [JSON] *is a lightweight, text-based, language-independent data interchange format.*
 
-This library brings a natural interface into C++ for playing with JSON data.
+
+What This Library Provides
+--------------------------
+
+- Against the JSON standard.
+
+  The JSON standard is [RFC 7159]. Neither the *obsoleted* [RFC 4627]
+  nor the *non-standard* one specified in [JSON.org].
+  See the [history] for fun!
+
+- A natural data wrapper, not a rigid codec.
+
+  Converting smoothly from/to native types.
+
+- Benefits from modern C++.
+
+  - No explicit memory management (`new` and `delete`).
+
+  - `auto`, `for` (each) and many others make the code is easy to read.
 
 
-But, why another wheel?
------------------------
+API
+---
 
-Yes, there are many libraries can be used in C++ to decode/encode JSON.
-But for those libraries I known -*I only know a few :sweat_smile:*,
-I don't like them, because:
+See [json.hpp](include/json.hpp).
 
-1. I want a natural data wrapper, not a rigid codec.
-   I.e. I don't want to copy data between the interface provided by a library
-   and the representation in my application.
+- Construct from JSON text.
 
-   Instead of, I want the library:
-   - has implicit type casting, e.g. numeric string to number, as other languages do;
-   - has useful overloaded operators, to fit into an application directly & smoothly.
+  ```cpp
+  so::json::parse(std::string) -> so::json
+  ```
+  E.g.
+  ```cpp
+  auto j = so::json::parse(R"json({"hello":"world"})json");
+  ```
 
-2. They are written in C (or C in mind), which are still hardly playing with their memories.
+- Convert to JSON text.
 
-3. They are not written against the JSON standard.
-   The JSON standard is [RFC 7159]. Neither [RFC 4627] nor the one specified in [JSON.org].
-   See the [history] for fun!
+  ```cpp
+  so::json::stringify() -> std::string
+  ```
+  E.g.
+  ```cpp
+  std::cout << j.stringify();
+  ```
+  > ```
+  > {"hello":"world"}
+  > ```
 
-4. They are not benefited from the new C++ standards.
-   C++11 and C++14 make coding much easier.
+  ```cpp
+  std::cout << j.stringify(true);
+  ```
+  > ```
+  > {
+  > 	"hello": "world"
+  > }
+  > ```
 
+- Construct from native types.
 
-So, how to use this library?
-----------------------------
+  ```cpp
+  // null
+  so::json::json(std::nullptr_t)
+  // boolean
+  so::json::json(bool)
+  // number
+  so::json::json(double)
+  // string
+  so::json::json(std::string)
+  // array
+  so::json::json(std::vector<so::json>)
+  // object
+  so::json::json(std::map<std::string, so::json>)
+  ```
 
-_TODO_ :running:
+- Assign from native types.
 
+  ```cpp
+  // null
+  so::json::operator=(std::nullptr_t) -> this
+  // boolean
+  so::json::operator=(bool) -> this
+  // number
+  so::json::operator=(double) -> this
+  // string
+  so::json::operator=(std::string) -> this
+  // array
+  so::json::operator=(std::vector<so::json>) -> this
+  // object
+  so::json::operator=(std::map<std::string, so::json>) -> this
+  ```
 
-My personal opinions
---------------------
+- Convert to native types.
 
-JSON is extremely useful in untrusted communications.
+  ```cpp
+  // boolean
+  so::json::operator bool()
+  // number
+  so::json::operator double()
+  // string
+  so::json::operator std::string()
+  // array
+  so::json::operator std::vector<so::json>()
+  // object
+  so::json::operator std::map<std::string, so::json>()
+  ```
 
-_CONTINUE_ :running:
+  Plus reference edition for in place manipulating array and object.
+
+  ```cpp
+  // array
+  so::json::operator std::vector<so::json>&()
+  // object
+  so::json::operator std::map<std::string, so::json>&()
+  ```
+
+- Access child element of array and object.
+
+  ```cpp
+  so::json::operator[](size_t) -> so::json&
+  so::json::operator[](std::string) -> so::json&
+  ```
+
+  Which will throw `std::out_of_range` if child not exists.
+
+  ```cpp
+  so::json::operator()(size_t) -> so::json&
+  so::json::operator()(std::string) -> so::json&
+  ```
+
+  Which will create default value if child not exists.
+
+  Mix use of `size_t` and `std::string` is acceptable.
+
+  ```cpp
+  auto a = so::json::parse(R"json(["hello", "world"])json");
+  auto o = so::json::parse(R"json({"2":"hello", "3":"world"})json");
+  std::cout << a["0"].stringify() << o[3].stringify();
+  ```
+  > ```
+  > "hello""world"
+  > ```
+
+- Compare equalization.
+
+  ```cpp
+  so::json::operator==(so::json) -> bool
+  ```
+
+  > **Note!**
+  > `<` and `<=` etc. are not provided, as it's ambiguity to do so
+  > between different internal types.  
+  > Explicit type casting is preferred before those comparison.
+
+- Check type.
+
+  ```cpp
+  so::json::type() -> so::json::content_type
+  ```
+  ```cpp
+  so::is::null(so::json) -> bool
+  so::is::boolean(so::json) -> bool
+  so::is::number(so::json) -> bool
+  so::is::string(so::json) -> bool
+  so::is::array(so::json) -> bool
+  so::is::object(so::json) -> bool
+  ```
 
 
 License
