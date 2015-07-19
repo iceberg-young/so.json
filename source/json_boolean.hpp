@@ -5,7 +5,7 @@
 
 namespace so {
     class json_false :
-      public json_solo<json::content_type::boolean> {
+      public json_solo<json_false, json::content_type::boolean> {
      public:
         bool to_boolean() const final override {
             return false;
@@ -20,11 +20,11 @@ namespace so {
         }
 
      public:
-        static json::data_t solo;
+        static const json::data_t solo;
     };
 
     class json_true :
-      public json_solo<json::content_type::boolean> {
+      public json_solo<json_true, json::content_type::boolean> {
      public:
         bool to_boolean() const final override {
             return true;
@@ -39,7 +39,7 @@ namespace so {
         }
 
      public:
-        static json::data_t solo;
+        static const json::data_t solo;
     };
 }
 

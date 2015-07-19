@@ -19,7 +19,7 @@ namespace so {
 
         virtual ~json_data() {}
 
-        virtual json::data_t clone() = 0;
+        virtual json::data_t clone() const = 0;
 
      public:
         virtual bool to_boolean() const = 0;
@@ -62,8 +62,8 @@ namespace so {
           json_data(T_type),
           value(std::move(value)) {}
 
-        virtual json::data_t clone() final override {
-            return std::make_shared<T_sub>(*dynamic_cast<T_sub* const>(this));
+        virtual json::data_t clone() const final override {
+            return std::make_shared<T_sub>(*dynamic_cast<const T_sub* const>(this));
         }
 
      public: // Downcast helper.
@@ -83,16 +83,15 @@ namespace so {
         T_value value;
     };
 
-    template<json::content_type T_type>
+    template<typename T_sub, json::content_type T_type>
     class json_solo :
-      public json_data,
-      public std::enable_shared_from_this<json_data> {
+      public json_data {
      public:
         json_solo() :
           json_data(T_type) {}
 
-        virtual json::data_t clone() final override {
-            return this->shared_from_this();
+        virtual json::data_t clone() const final override {
+            return T_sub::solo;
         }
     };
 }

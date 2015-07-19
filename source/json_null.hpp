@@ -5,7 +5,7 @@
 
 namespace so {
     class json_null :
-      public json_solo<json::content_type::null> {
+      public json_solo<json_null, json::content_type::null> {
      public:
         bool to_boolean() const final override {
             return false;
@@ -25,7 +25,7 @@ namespace so {
         }
 
      public:
-        static json::data_t solo;
+        static const json::data_t solo;
     };
 }
 
