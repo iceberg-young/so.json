@@ -21,7 +21,7 @@ What This Library Provides
 
   - No explicit memory management (`new` and `delete`).
 
-  - `auto`, `for` (each) and many others make the code is easy to read.
+  - `auto`, `for` (each) and many others make the code easy to read.
 
 
 API
@@ -135,7 +135,7 @@ See [json.hpp](include/json.hpp).
 
   Which will create default value if child not exists.
 
-  Mix use of `size_t` and `std::string` is acceptable.
+  Mix use of `size_t` and `std::string` is acceptable. E.g.
 
   ```cpp
   auto a = so::json::parse(R"json(["hello", "world"])json");
@@ -153,8 +153,8 @@ See [json.hpp](include/json.hpp).
   ```
 
   > **Note!**
-  > `<` and `<=` etc. are not provided, as it's ambiguity to do so
-  > between different internal types.  
+  > `<` and `<=` etc. are not provided, as it is ambiguity to do so
+  > between different internal types.
   > Explicit type casting is preferred before those comparison.
 
 - Check type.
@@ -170,6 +170,13 @@ See [json.hpp](include/json.hpp).
   so::is::array(so::json) -> bool
   so::is::object(so::json) -> bool
   ```
+
+
+Acknowledgement
+---------------
+
+The [json11] library has some ideas and purposes similar with this library.
+I learnt from it.
 
 
 License
@@ -208,6 +215,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 [history]: https://www.tbray.org/ongoing/When/201x/2014/03/05/RFC7159-JSON
 "JSON Redux AKA RFC7159"
+
+[json11]: https://github.com/dropbox/json11
+"A tiny JSON library for C++11."
 
 [LGPLv3]: http://www.gnu.org/graphics/lgplv3-88x31.png
 "GNU Lesser General Public License version 3"
