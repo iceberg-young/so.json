@@ -71,13 +71,10 @@ namespace so {
 
     std::string json_array::to_string() const {
         std::string s;
-        if (not this->value.empty()) {
-            auto e = --this->value.end();
-            for (auto i = this->value.begin(); i != e; ++i) {
-                (s += i->data->to_string()) += ',';
-            }
-            s += e->data->to_string();
+        for (auto& v : this->value) {
+            (s += v.data->to_string()) += ',';
         }
+        if (not s.empty()) s.pop_back();
         return s;
     }
 
@@ -96,15 +93,13 @@ namespace so {
     void json_array::stringify(std::string& target, const std::string& indent) const {
         target += '[';
         if (not this->value.empty()) {
-            auto e = --this->value.end();
             auto pad = indent.empty() ? indent : indent + '\t';
-            for (auto i = this->value.begin(); i != e; ++i) {
+            for (auto& v : this->value) {
                 target += pad;
-                i->data->stringify(target, pad);
+                v.data->stringify(target, pad);
                 target += ',';
             }
-            target += pad;
-            e->data->stringify(target, pad);
+            target.pop_back();
             target += indent;
         }
         target += ']';

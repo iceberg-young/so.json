@@ -84,8 +84,9 @@ namespace so {
         std::string s;
         for (auto& v : this->value) {
             s += '[' + v.second.type_name() + ' ' + v.first + "]\n";
-            s += v.second.to_string() + '\n';
+            (s += v.second.to_string()) += '\n';
         }
+        if (not s.empty()) s.pop_back();
         return s;
     }
 
@@ -101,15 +102,13 @@ namespace so {
     void json_object::stringify(std::string& target, const std::string& indent) const {
         target += '{';
         if (not this->value.empty()) {
-            auto e = --this->value.end();
             auto pad = indent.empty() ? indent : indent + '\t';
-            for (auto i = this->value.begin(); i != e; ++i) {
+            for (auto& p : this->value) {
                 target += pad;
-                append_pair(i->first, i->second, target, pad);
+                append_pair(p.first, p.second, target, pad);
                 target += ',';
             }
-            target += pad;
-            append_pair(e->first, e->second, target, pad);
+            target.pop_back();
             target += indent;
         }
         target += '}';
