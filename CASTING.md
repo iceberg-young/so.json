@@ -60,12 +60,11 @@ String
             | array   |           | `[]`
             | object  |           | `{}`
  default    | boolean | :x:       | `true`
-            | number  | :o: :bug: | `stod(x)`
+            | number  | :o:       | [`strtod(x)`]
             | array   |           | `[x]`
-            | object  |           | `{"0":x}`
+            | object  | :x:       | `{"0":x}`
 
-> **Fix!**
-> `stod` will throw!
+[`strtod(x)`]: http://en.cppreference.com/w/cpp/string/byte/strtof
 
 
 Array
@@ -76,9 +75,9 @@ Array
  `[]`       | boolean |           | `false`
             | number  |           | `NaN`
  default    | boolean | :x:       | `true`
-            | number  | :o:       | 1st child
+            | number  | :o:       | 1<sup>st</sup> child
             | string  | :o:       | comma separated children
-            | object  | :x:       | index as key
+            | object  |           | index as key
 
 
 Object
@@ -91,9 +90,6 @@ Object
             | string  |           | `""`
             | array   |           | `[]`
  default    | boolean | :x:       | `true`
-            | number  | :o:       | 1st child
-            | string  | :x:       | `"[object Object]"`
-            | array   | :x: :bug: | values
-
-> **Fix!**
-> When casting to array, should sort by key instead of internal order.
+            | number  | :o:       | 1<sup>st</sup> child
+            | string  | :x:       | `"[type key]\nvalue"`
+            | array   | :x:       | values (sorted by keys)

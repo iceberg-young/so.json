@@ -26,4 +26,28 @@ namespace so {
     json::content_type json::type() const {
         return this->data->type;
     }
+
+    std::string json::type_name() const {
+        switch (this->data->type) {
+            case content_type::null: {
+                return "null";
+            }
+            case content_type::boolean: {
+                return "boolean";
+            }
+            case content_type::number: {
+                return "number";
+            }
+            case content_type::string: {
+                return "string";
+            }
+            case content_type::array: {
+                return "array";
+            }
+            case content_type::object: {
+                return "object";
+            }
+        }
+        throw this->data->type;
+    }
 }

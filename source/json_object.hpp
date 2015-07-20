@@ -23,9 +23,7 @@ namespace so {
 
         double to_number() const final override;
 
-        std::string to_string() const final override {
-            return "[object Object]";
-        }
+        std::string to_string() const final override;
 
         json::array_t to_array() const final override;
 

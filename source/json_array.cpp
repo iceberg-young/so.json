@@ -1,5 +1,7 @@
 #include "json_array.hpp"
 #include <limits>
+#include <iomanip>
+#include <sstream>
 
 namespace so {
     json::json(const array_t& value) :
@@ -81,9 +83,12 @@ namespace so {
 
     json::object_t json_array::to_object() const {
         json::object_t o;
+        auto width = std::to_string(this->value.size() - 1).size();
         int i = 0;
         for (auto& v : this->value) {
-            o[std::to_string(i++)] = v;
+            std::ostringstream k;
+            k << std::setw(width) << std::setfill('0') << i++;
+            o[k.str()] = v;
         }
         return o;
     }

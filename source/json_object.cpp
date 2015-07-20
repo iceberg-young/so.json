@@ -80,6 +80,15 @@ namespace so {
           : (double) this->value.begin()->second;
     };
 
+    std::string json_object::to_string() const {
+        std::string s;
+        for (auto& v : this->value) {
+            s += '[' + v.second.type_name() + ' ' + v.first + "]\n";
+            s += v.second.to_string() + '\n';
+        }
+        return s;
+    }
+
     json::array_t json_object::to_array() const {
         json::array_t a;
         a.reserve(this->value.size());

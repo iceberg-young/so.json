@@ -91,6 +91,8 @@ namespace so {
 
         content_type type() const;
 
+        std::string type_name() const;
+
      public: // Set content value. Return *this.
         json& be_null();
 

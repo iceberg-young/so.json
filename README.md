@@ -109,6 +109,8 @@ See [json.hpp](include/json.hpp).
   // object
   so::json::operator std::map<std::string, so::json>()
   ```
+  > **Under The Hood!**
+  > See [casting rules](CASTING.md) for more details.
 
   Plus reference edition for in place manipulating array and object.
 

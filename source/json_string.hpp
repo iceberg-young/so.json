@@ -22,7 +22,7 @@ namespace so {
         }
 
         double to_number() const final override {
-            return std::stod(this->value);
+            return std::strtod(this->value.c_str(), nullptr);
         }
 
         std::string to_string() const final override {

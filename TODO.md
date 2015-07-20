@@ -1,9 +1,6 @@
 TODO
 ====
 
-
-- README.md
 - test
 - benchmark
-- pretty print?
-- operator+= / overlap
+- initializer_list for array and object
