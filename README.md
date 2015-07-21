@@ -162,7 +162,7 @@ See [json.hpp](include/json.hpp).
 - Check type.
 
   ```cpp
-  so::json::type() -> so::json::content_type
+  so::json::type_name() -> std::string
   ```
   ```cpp
   so::is::null(so::json) -> bool

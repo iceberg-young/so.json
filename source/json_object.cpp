@@ -75,18 +75,35 @@ namespace so {
     }
 
     double json_object::to_number() const {
-        return this->value.empty()
-          ? std::numeric_limits<double>::quiet_NaN()
-          : (double) this->value.begin()->second;
-    };
+        switch (this->value.size()) {
+            case 0: {
+                return std::numeric_limits<double>::quiet_NaN();
+            }
+            case 1: {
+                return this->value.begin()->second;
+            }
+            default: {
+                return -std::numeric_limits<double>::infinity();
+            }
+        }
+    }
 
     std::string json_object::to_string() const {
         std::string s;
-        for (auto& v : this->value) {
-            s += '[' + v.second.type_name() + ' ' + v.first + "]\n";
-            (s += v.second.to_string()) += '\n';
+        if (not this->value.empty()) {
+            std::map<std::string, size_t> count;
+            for (auto& v : this->value) {
+                is::object(v.second)
+                  ? count[v.second.to_string()] += 1
+                  : count[v.second.type_name()] += 1;
+            }
+            s += '(';
+            for (auto& c : count) {
+                (((s += c.first) += ':') += std::to_string(c.second)) += ' ';
+            }
+            s.pop_back();
+            s += ')';
         }
-        if (not s.empty()) s.pop_back();
         return s;
     }
 

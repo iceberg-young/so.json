@@ -64,9 +64,17 @@ namespace so {
     }
 
     double json_array::to_number() const {
-        return this->value.empty()
-          ? std::numeric_limits<double>::quiet_NaN()
-          : (double) *this->value.begin();
+        switch (this->value.size()) {
+            case 0: {
+                return std::numeric_limits<double>::quiet_NaN();
+            }
+            case 1: {
+                return (double) *this->value.begin();
+            }
+            default: {
+                return std::numeric_limits<double>::infinity();
+            }
+        }
     }
 
     std::string json_array::to_string() const {
