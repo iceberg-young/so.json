@@ -111,7 +111,7 @@ Object
  size == 1  | number  | :o:       | 1<sup>st</sup> child
  otherwise  | boolean | :x:       | `true`
             | number  | :x:       | `-Infinity`
-            | string  | :x:       | `(` space separated types `)`
+            | string  | :x:       | `(` type `:` amount `)` see example below
             | array   | :x:       | values (sorted by keys)
 
 > :o: if there is only **one** child in the object,

@@ -78,6 +78,17 @@ See [json.hpp](include/json.hpp).
   so::json::json(std::map<std::string, so::json>)
   ```
 
+  E.g.
+
+  ```cpp
+  so::json object{
+    {
+      {"hello", "world"},
+      {"array", {{"J", "S", "O", "N"}}}
+    }
+  };
+  ```
+
 - Assign from native types.
 
   ```cpp
