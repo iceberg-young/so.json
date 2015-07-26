@@ -87,12 +87,16 @@ namespace so {
     }
 
     json::object_t json_array::to_object() const {
+        std::ostringstream k;
+        k << std::hex << this->value.size() - 1;
+        auto w = k.str().size();
+        k << std::setfill('0');
+        size_t i = 0;
+
         json::object_t o;
-        auto width = std::to_string(this->value.size() - 1).size();
-        int i = 0;
         for (auto& v : this->value) {
-            std::ostringstream k;
-            k << std::setw(width) << std::setfill('0') << i++;
+            k.seekp(0);
+            k << std::setw(w) << i++;
             o[k.str()] = v;
         }
         return o;
