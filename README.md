@@ -32,8 +32,9 @@ See [json.hpp](include/json.hpp).
 - Construct from JSON text.
 
   ```cpp
-  so::json::parse(std::string) -> so::json
+  static so::json::parse(std::string) -> so::json
   ```
+
   E.g.
   ```cpp
   auto j = so::json::parse(R"json({"hello":"world"})json");
@@ -44,6 +45,7 @@ See [json.hpp](include/json.hpp).
   ```cpp
   so::json::stringify() -> std::string
   ```
+
   E.g.
   ```cpp
   std::cout << j.stringify();
@@ -51,7 +53,6 @@ See [json.hpp](include/json.hpp).
   > ```
   > {"hello":"world"}
   > ```
-
   ```cpp
   std::cout << j.stringify(true);
   ```
@@ -79,7 +80,6 @@ See [json.hpp](include/json.hpp).
   ```
 
   E.g.
-
   ```cpp
   so::json object{
     {
@@ -120,6 +120,7 @@ See [json.hpp](include/json.hpp).
   // object
   so::json::operator std::map<std::string, so::json>()
   ```
+
   > **Under The Hood!**
   > See [casting rules](CASTING.md) for more details.
 
@@ -148,16 +149,17 @@ See [json.hpp](include/json.hpp).
 
   Which will create default value if child not exists.
 
-  Mix use of `size_t` and `std::string` is acceptable. E.g.
-
-  ```cpp
-  auto a = so::json::parse(R"json(["hello", "world"])json");
-  auto o = so::json::parse(R"json({"2":"hello", "3":"world"})json");
-  std::cout << a["0"].stringify() << o[3].stringify();
-  ```
+  > **Tip!**
+  > Mix use of `size_t` and `std::string` is acceptable.
+  > E.g.
+  > ```cpp
+  > auto a = so::json::parse(R"json(["hello", "world"])json");
+  > auto o = so::json::parse(R"json({"2":"hello", "3":"world"})json");
+  > std::cout << a["0"].stringify() << o[3].stringify();
   > ```
-  > "hello""world"
-  > ```
+  >> ```
+  >> "hello""world"
+  >> ```
 
 - Compare equalization.
 

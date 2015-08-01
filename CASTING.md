@@ -68,7 +68,7 @@ String
             | array   |           | `[x]`
             | object  | :x:       | `{"0":x}`
 
-> :o: if the content is numeric, as described in [std::strtod].
+> :o: If the content is numeric, as described in [std::strtod].
 [std::strtod]: http://en.cppreference.com/w/cpp/string/byte/strtof
 
 
@@ -79,16 +79,18 @@ Array
 -----------:|:-------:|:---------:|:-----------
  `[]`       | boolean |           | `false`
             | number  |           | `NaN`
- size == 1  | number  | :o:       | 1<sup>st</sup> child
+ size()==1  | number  | :o: :one: | 1<sup>st</sup> child
  otherwise  | boolean | :x:       | `true`
             | number  | :x:       | `Infinity`
-            | string  | :o:       | comma separated children
+            | string  | :o: :two: | comma separated children
             | object  |           | index as key
 
-> :o: if there is only **one** child in the array,
-> and type of that child is **Go & Back**-OK with target type.
+> :o: :one: If the only child is a `number`.
+
+> :o: :two: If there is only one `string` child.
 
 ### Caution!
+
 Stacked array cannot be distinguished from flat array when casting to string.
 E.g.
 ```cpp
@@ -108,14 +110,15 @@ Object
             | number  |           | `NaN`
             | string  |           | `""`
             | array   |           | `[]`
- size == 1  | number  | :o:       | 1<sup>st</sup> child
+ size()==1  | number  | :o:       | 1<sup>st</sup> child
  otherwise  | boolean | :x:       | `true`
             | number  | :x:       | `-Infinity`
-            | string  | :x:       | `(` type `:` amount `)` see example below
+            | string  | :x:       | `(`type`:`count`)` *recursively, see below*
             | array   | :x:       | values (sorted by keys)
 
-> :o: if there is only **one** child in the object,
-> and type of that child is **Go & Back**-OK with `number`.
+> :o: If the only child is a `number`.
+
+### Example of casting `object` to `string`
 
 ```cpp
 auto object = R"json(

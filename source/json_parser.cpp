@@ -167,7 +167,7 @@ namespace so {
     }
 
     void json_parser::pass_literals(const std::string& expected) {
-        for (auto c : expected) {
+        for (char c : expected) {
             if (c != *this->iterator++) {
                 throw json_parse_error{this->location() + " expected: " + c};
             }

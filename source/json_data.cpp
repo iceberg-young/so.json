@@ -64,7 +64,7 @@ namespace so {
     const std::string json_data::esc_value{"\b\f\n\r\t"};
 
     void json_data::escape(const std::string& source, std::string& target) {
-        for (auto c : source) {
+        for (char c : source) {
             if (c >= 0 and c < 0x20) {
                 auto pos = esc_value.find(c);
                 if (pos != std::string::npos) {
