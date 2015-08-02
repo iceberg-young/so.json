@@ -1,3 +1,8 @@
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+
 #include "json_array.hpp"
 #include <limits>
 #include <iomanip>

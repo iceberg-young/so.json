@@ -1,5 +1,8 @@
-#ifndef INCLUDE_SO_JSON_OBJECT_ONCE_FLAG
-#define INCLUDE_SO_JSON_OBJECT_ONCE_FLAG
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+#pragma once
 
 #include "json_data.hpp"
 
@@ -35,5 +38,3 @@ namespace so {
         void stringify(std::string& target, const std::string& indent) const final override;
     };
 }
-
-#endif//INCLUDE_SO_JSON_OBJECT_ONCE_FLAG

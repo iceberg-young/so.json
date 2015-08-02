@@ -1,3 +1,8 @@
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+
 #include "json_null.hpp"
 #include "json_boolean.hpp"
 #include "json_number.hpp"
@@ -5,7 +10,7 @@
 #include "json_array.hpp"
 #include "json_object.hpp"
 #include "json_parser.hpp"
-#include "unicode.hpp"
+#include "utf.hpp"
 
 namespace so {
     enum class json_token :
@@ -193,7 +198,7 @@ namespace so {
             if (c == '\\') {
                 ++this->iterator;
                 if (this->pick(c) == 'u') {
-                    target += utf8(unicode::escaped(--this->iterator));
+                    target += utf8(utf::escaped(--this->iterator));
                     continue;
                 }
                 auto pos = json_data::esc_label.find(c);

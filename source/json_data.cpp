@@ -1,10 +1,15 @@
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+
 #include "json_null.hpp"
 #include "json_boolean.hpp"
 #include "json_number.hpp"
 #include "json_string.hpp"
 #include "json_array.hpp"
 #include "json_object.hpp"
-#include "unicode.hpp"
+#include "utf.hpp"
 
 namespace so {
     json& json::be(content_type type) {
@@ -72,7 +77,7 @@ namespace so {
                     target += esc_label[pos];
                 }
                 else {
-                    target += unicode::escape(std::u16string{char16_t(c)});
+                    target += utf::escape(std::u16string{char16_t(c)});
                 }
             }
             else {

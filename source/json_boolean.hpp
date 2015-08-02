@@ -1,5 +1,8 @@
-#ifndef INCLUDE_SO_JSON_BOOLEAN_ONCE_FLAG
-#define INCLUDE_SO_JSON_BOOLEAN_ONCE_FLAG
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+#pragma once
 
 #include "json_data.hpp"
 
@@ -68,5 +71,3 @@ namespace so {
         static const json::data_t solo;
     };
 }
-
-#endif//INCLUDE_SO_JSON_BOOLEAN_ONCE_FLAG

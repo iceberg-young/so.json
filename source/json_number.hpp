@@ -1,5 +1,8 @@
-#ifndef INCLUDE_SO_JSON_NUMBER_ONCE_FLAG
-#define INCLUDE_SO_JSON_NUMBER_ONCE_FLAG
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+#pragma once
 
 #include "json_data.hpp"
 
@@ -29,5 +32,3 @@ namespace so {
         json::object_t to_object() const final override;
     };
 }
-
-#endif//INCLUDE_SO_JSON_NUMBER_ONCE_FLAG
