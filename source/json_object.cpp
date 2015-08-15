@@ -54,11 +54,11 @@ namespace so {
         return this->data->to_object();
     }
 
-    json::object_t& json::as_object() {
+    json::object_t& json::as_object() const {
         return json_object::get(this->data);
     }
 
-    json& json::operator[](const std::string& key) {
+    json& json::operator[](const std::string& key) const {
         return this->data->type == content_type::array
           ? (*this)[std::stoul(key)]
           : json_object::get(this->data).at(key);

@@ -39,11 +39,11 @@ namespace so {
         return this->data->to_array();
     }
 
-    json::array_t& json::as_array() {
+    json::array_t& json::as_array() const {
         return json_array::get(this->data);
     }
 
-    json& json::operator[](size_t index) {
+    json& json::operator[](size_t index) const {
         return this->data->type == content_type::object
           ? (*this)[std::to_string(index)]
           : json_array::get(this->data).at(index);

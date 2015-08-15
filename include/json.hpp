@@ -178,9 +178,9 @@ namespace so {
 
         object_t to_object() const;
 
-        array_t& as_array();
+        array_t& as_array() const;
 
-        object_t& as_object();
+        object_t& as_object() const;
 
      public: // Shortcuts of getting content value.
         operator bool() const {
@@ -216,11 +216,11 @@ namespace so {
         }
 
      public: // Access child element. Throw std::out_of_range if not exist.
-        json& operator[](size_t index);
+        json& operator[](size_t index) const;
 
-        json& operator[](const std::string& key);
+        json& operator[](const std::string& key) const;
 
-        json& operator[](const char* key) {
+        json& operator[](const char* key) const {
             return (*this)[std::string{key}];
         }
 

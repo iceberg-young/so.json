@@ -32,7 +32,8 @@ See [json.hpp](include/json.hpp).
 - Construct from JSON text.
 
   ```cpp
-  static so::json::parse(std::string) -> so::json
+  static
+  so::json  so::json::parse(std::string);
   ```
 
   E.g.
@@ -43,7 +44,7 @@ See [json.hpp](include/json.hpp).
 - Convert to JSON text.
 
   ```cpp
-  so::json::stringify() -> std::string
+  std::string  so::json::stringify();
   ```
 
   E.g.
@@ -66,17 +67,17 @@ See [json.hpp](include/json.hpp).
 
   ```cpp
   // null
-  so::json::json(std::nullptr_t)
+  so::json::json(std::nullptr_t);
   // boolean
-  so::json::json(bool)
+  so::json::json(bool);
   // number
-  so::json::json(double)
+  so::json::json(double);
   // string
-  so::json::json(std::string)
+  so::json::json(std::string);
   // array
-  so::json::json(std::vector<so::json>)
+  so::json::json(std::vector<so::json>);
   // object
-  so::json::json(std::map<std::string, so::json>)
+  so::json::json(std::map<std::string, so::json>);
   ```
 
   E.g.
@@ -93,32 +94,35 @@ See [json.hpp](include/json.hpp).
 
   ```cpp
   // null
-  so::json::operator=(std::nullptr_t) -> this
+  so::json&  so::json::operator=(std::nullptr_t);
   // boolean
-  so::json::operator=(bool) -> this
+  so::json&  so::json::operator=(bool);
   // number
-  so::json::operator=(double) -> this
+  so::json&  so::json::operator=(double);
   // string
-  so::json::operator=(std::string) -> this
+  so::json&  so::json::operator=(std::string);
   // array
-  so::json::operator=(std::vector<so::json>) -> this
+  so::json&  so::json::operator=(std::vector<so::json>);
   // object
-  so::json::operator=(std::map<std::string, so::json>) -> this
+  so::json&  so::json::operator=(std::map<std::string, so::json>);
   ```
+
+  > **Tip!**
+  > All of them return `*this`.
 
 - Convert to native types.
 
   ```cpp
   // boolean
-  so::json::operator bool()
+  so::json::operator bool();
   // number
-  so::json::operator double()
+  so::json::operator double();
   // string
-  so::json::operator std::string()
+  so::json::operator std::string();
   // array
-  so::json::operator std::vector<so::json>()
+  so::json::operator std::vector<so::json>();
   // object
-  so::json::operator std::map<std::string, so::json>()
+  so::json::operator std::map<std::string, so::json>();
   ```
 
   > **Under The Hood!**
@@ -128,23 +132,23 @@ See [json.hpp](include/json.hpp).
 
   ```cpp
   // array
-  so::json::operator std::vector<so::json>&()
+  so::json::operator std::vector<so::json>&();
   // object
-  so::json::operator std::map<std::string, so::json>&()
+  so::json::operator std::map<std::string, so::json>&();
   ```
 
 - Access child element of array and object.
 
   ```cpp
-  so::json::operator[](size_t) -> so::json&
-  so::json::operator[](std::string) -> so::json&
+  so::json&  so::json::operator[](size_t);
+  so::json&  so::json::operator[](std::string);
   ```
 
   Which will throw `std::out_of_range` if child not exists.
 
   ```cpp
-  so::json::operator()(size_t) -> so::json&
-  so::json::operator()(std::string) -> so::json&
+  so::json&  so::json::operator()(size_t);
+  so::json&  so::json::operator()(std::string);
   ```
 
   Which will create default value if child not exists.
@@ -164,7 +168,7 @@ See [json.hpp](include/json.hpp).
 - Compare equalization.
 
   ```cpp
-  so::json::operator==(so::json) -> bool
+  bool  so::json::operator==(so::json);
   ```
 
   > **Note!**
@@ -175,15 +179,15 @@ See [json.hpp](include/json.hpp).
 - Check type.
 
   ```cpp
-  so::json::type_name() -> std::string
+  std::string  so::json::type_name();
   ```
   ```cpp
-  so::is::null(so::json) -> bool
-  so::is::boolean(so::json) -> bool
-  so::is::number(so::json) -> bool
-  so::is::string(so::json) -> bool
-  so::is::array(so::json) -> bool
-  so::is::object(so::json) -> bool
+  bool  so::is::null(so::json);
+  bool  so::is::boolean(so::json);
+  bool  so::is::number(so::json);
+  bool  so::is::string(so::json);
+  bool  so::is::array(so::json);
+  bool  so::is::object(so::json);
   ```
 
 
